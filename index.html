@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Art Portfolio</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Intro Screen -->
+    <div id="intro-screen">
+        <div id="intro-left-section">
+            <img id="intro-avatar" src="avatar.png" alt="Avatar">
+            <div id="intro-dialogue-box">
+                <p>Hi! I'm Sruthi Sivakumar.</p>
+                <p>Explore by interacting with the items in my room (tip: start with the bookshelf :D)</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="game-container" class="hidden">
+        <!-- Avatar image with dialogue box -->
+        <img id="avatar" src="avatar.png" alt="Sruthi's Pixel Avatar">
+        <span id="avatar-name">Sruthi S</span>
+        <div id="dialogue-box">
+            <p id="dialogue-text">Hello there!</p>
+        </div>
+        
+        <!-- Resume button in top right corner -->
+        <a href="https://drive.google.com/file/d/1R0U3IRAHfpFIeKElfqRq9KWfT3EaOVR9/view?usp=sharing" target="_blank" id="resume-button">View my Résumé</a>
+        
+        <!-- Interactive hotspots -->
+        <div id="hotspot-computer" class="hotspot" data-tooltip="Projects"></div>
+        <div id="hotspot-phone" class="hotspot" data-tooltip="Contact"></div>
+        <div id="hotspot-bookshelf" class="hotspot" data-tooltip="About Me"></div>
+        <div id="hotspot-bulletin" class="hotspot" data-tooltip="Experience"></div>
+        
+        <!-- Popup modal -->
+        <div id="popup-modal">
+            <h3 id="modal-title">Title</h3>
+            <p id="modal-content">Content goes here...</p>
+            <button id="close-button">Close</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

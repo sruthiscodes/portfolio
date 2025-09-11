@@ -1,0 +1,512 @@
+/* Reset and base styles */
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Courier New', monospace;
+}
+
+/* Intro Screen Styling */
+#intro-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: opacity 1.5s ease-in-out;
+    cursor: pointer;
+}
+
+#intro-left-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#intro-avatar {
+    width: 200px;
+    height: 200px;
+    position: relative;
+    will-change: transform, width, height, top, left;
+}
+
+#intro-dialogue-box {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 3px solid white;
+    padding: 20px 40px;
+    color: white;
+    font-family: 'Courier New', monospace;
+    text-align: center;
+    max-width: 400px;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+}
+
+#intro-dialogue-box p {
+    margin: 10px 0;
+    font-size: 16px;
+    line-height: 1.4;
+}
+
+
+/* Hidden class for game container */
+.hidden {
+    display: none;
+}
+
+/* Pulsing hotspot animation */
+@keyframes pulse {
+    0% { 
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); 
+    }
+    70% { 
+        box-shadow: 0 0 0 20px rgba(255, 255, 255, 0); 
+    }
+    100% { 
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); 
+    }
+}
+
+.pulsing-hotspot {
+    animation: pulse 1.5s infinite;
+    border-radius: 50%;
+}
+
+/* Main game container */
+#game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background-image: url('background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    overflow: hidden;
+}
+
+/* Avatar styling */
+#avatar {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+    width: 80px;
+    height: 80px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+#avatar:hover {
+    transform: scale(1.1);
+}
+
+/* Avatar name styling */
+#avatar-name {
+    position: absolute;
+    top: 38px;
+    left: 100px;
+    z-index: 10;
+    font-family: 'Courier New', monospace;
+    font-size: 20px;
+    font-weight: bold;
+    color: #f0f0f0;
+}
+
+/* Main game dialogue box styling */
+#dialogue-box {
+    position: absolute;
+    top: -60px;
+    left: 100px;
+    background-color: #f0f0f0;
+    border: 3px solid #333;
+    padding: 12px 16px;
+    min-width: 200px;
+    max-width: 300px;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    display: none;
+    z-index: 15;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 0;
+}
+
+#dialogue-text {
+    margin: 0;
+    color: #333;
+    line-height: 1.4;
+}
+
+/* Resume button styling */
+#resume-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 15;
+    color: #333;
+    text-decoration: none;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 8px 12px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 2px solid black;
+    transition: all 0.2s;
+}
+
+#resume-button:hover {
+    background-color: #de648c;
+    color: white;
+}
+
+/* Hotspot styling */
+.hotspot {
+    position: absolute;
+    background-color: transparent;
+    cursor: pointer;
+    border: none;
+    z-index: 5;
+}
+
+/* Tooltip styling */
+.hotspot::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    padding: 8px 12px;
+    border: 2px solid black;
+    font-size: 12px;
+    font-family: 'Courier New', monospace;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.hotspot:hover::before {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Telephone hotspot - bottom-middle area */
+#hotspot-phone {
+    top: 65%;
+    left: 35%;
+    width: 7.5%;
+    height: 10%;
+}
+
+#hotspot-bulletin {
+    /* Smaller, more precise area for bulletin board */
+    top: 15%;
+    left: 35%;
+    width: 25%;
+    height: 20%;
+  
+    /* Temporarily remove clip-path to fix tooltip issues */
+    /* clip-path: polygon(30% 15%, 75% -20%, 75% 67%, 30% 100%); */
+}
+
+#hotspot-computer {
+    /* Smaller, more precise area for computer */
+    top: 35%;
+    left: 50%;
+    width: 25%;
+    height: 25%;
+  
+    /* Temporarily remove clip-path to fix tooltip issues */
+    /* clip-path: polygon(20% 20%, 60% 20%, 60% 100%, 20% 80%); */
+}
+
+/* Bookshelf hotspot - right side */
+#hotspot-bookshelf {
+    top: 25%;
+    left: 76%;
+    width: 20%;
+    height: 70%;
+}
+
+/* Popup modal styling */
+#popup-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    max-width: 90vw;
+    background-color: #f0f0f0;
+    border: 5px solid black;
+    padding: 20px;
+    z-index: 1000;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+#popup-modal h3 {
+    margin: 0 0 15px 0;
+    font-size: 18px;
+    color: #333;
+    text-align: center;
+}
+
+#popup-modal p {
+    margin: 0 0 20px 0;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #555;
+}
+
+#close-button {
+    display: block;
+    margin: 0 auto;
+    padding: 8px 16px;
+    background-color: #333;
+    color: white;
+    border: 2px solid black;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+}
+
+#close-button:hover {
+    background-color: #555;
+}
+
+/* Modal content styling */
+#popup-modal h4 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    color: #333;
+    border-bottom: 2px solid black;
+    padding-bottom: 5px;
+}
+
+/* Projects styling */
+.projects-container {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.project-item {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f8f8f8;
+    border: 2px solid black;
+    border-radius: 0;
+}
+
+.project-title {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.project-description {
+    margin: 0 0 12px 0;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #555;
+}
+
+.project-links {
+    display: flex;
+    gap: 10px;
+}
+
+.project-link {
+    padding: 6px 12px;
+    background-color: #333;
+    color: white;
+    text-decoration: none;
+    border: 2px solid black;
+    font-size: 11px;
+    transition: background-color 0.2s;
+}
+
+.project-link:hover {
+    background-color: #555;
+}
+
+.live-link {
+    background-color: #4CAF50;
+}
+
+.live-link:hover {
+    background-color: #45a049;
+}
+
+.github-link {
+    background-color: #333;
+}
+
+.github-link:hover {
+    background-color: #555;
+}
+
+/* Experiences styling */
+.experiences-container {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.experience-item {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f8f8f8;
+    border: 2px solid black;
+    border-radius: 0;
+}
+
+.experience-role {
+    margin: 0 0 5px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.experience-company {
+    margin: 0 0 10px 0;
+    font-size: 12px;
+    color: #666;
+    font-style: italic;
+}
+
+.experience-description {
+    font-size: 12px;
+    line-height: 1.4;
+    color: #555;
+}
+
+/* About Me styling */
+.about-container {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.bio {
+    margin: 0 0 20px 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #555;
+}
+
+.skills-section, .education-section, .resume-section {
+    margin-bottom: 20px;
+}
+
+.skills-section h4, .education-section h4 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.skill-tag {
+    padding: 4px 8px;
+    background-color: #e0e0e0;
+    border: 2px solid black;
+    font-size: 11px;
+    color: #333;
+}
+
+.education-section p {
+    margin: 0;
+    font-size: 12px;
+    color: #555;
+}
+
+.resume-link {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #de648c;
+    color: white;
+    text-decoration: none;
+    border: 2px solid black;
+    font-size: 12px;
+    transition: background-color 0.2s;
+    font-family: 'Courier New', monospace;
+}
+
+.resume-link:hover {
+    background-color: #c9457a;
+}
+
+/* Contact styling */
+.contact-container {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.contact-item {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f8f8f8;
+    border: 2px solid black;
+    border-radius: 0;
+}
+
+.contact-item h4 {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.contact-link {
+    color: #2196F3;
+    text-decoration: none;
+    font-size: 12px;
+    transition: color 0.2s;
+}
+
+.contact-link:hover {
+    color: #1976D2;
+    text-decoration: underline;
+}
+
+/* Scrollbar styling for pixel art theme */
+.projects-container::-webkit-scrollbar,
+.experiences-container::-webkit-scrollbar,
+.about-container::-webkit-scrollbar,
+.contact-container::-webkit-scrollbar {
+    width: 12px;
+}
+
+.projects-container::-webkit-scrollbar-track,
+.experiences-container::-webkit-scrollbar-track,
+.about-container::-webkit-scrollbar-track,
+.contact-container::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border: 2px solid black;
+}
+
+.projects-container::-webkit-scrollbar-thumb,
+.experiences-container::-webkit-scrollbar-thumb,
+.about-container::-webkit-scrollbar-thumb,
+.contact-container::-webkit-scrollbar-thumb {
+    background: #333;
+    border: 1px solid black;
+}
+
+.projects-container::-webkit-scrollbar-thumb:hover,
+.experiences-container::-webkit-scrollbar-thumb:hover,
+.about-container::-webkit-scrollbar-thumb:hover,
+.contact-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
