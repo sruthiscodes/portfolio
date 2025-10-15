@@ -139,7 +139,7 @@ const closeButton = document.getElementById('close-button');
 gameContainer.classList.add('hidden');
 
 // Set intro avatar source
-introAvatar.src = 'avatar.png';
+introAvatar.src = 'assets/pics/avatar.png';
 
 // Intro screen click listener - clicking anywhere takes you to portfolio
 introScreen.addEventListener('click', () => {
