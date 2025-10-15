@@ -437,6 +437,7 @@ html, body {
 .about-container {
     max-height: 400px;
     overflow-y: auto;
+    padding-right: 15px;
 }
 
 .bio {
@@ -446,34 +447,168 @@ html, body {
     color: #555;
 }
 
-.skills-section, .education-section, .resume-section {
-    margin-bottom: 20px;
+/* Skills Section */
+.skills-section {
+    margin-bottom: 25px;
+    margin-top: 30px;
 }
 
-.skills-section h4, .education-section h4 {
-    margin: 0 0 10px 0;
+.skills-section h4 {
+    margin: 0 0 15px 0;
     font-size: 14px;
     color: #333;
 }
 
-.skills-list {
+.skill-category {
+    margin-bottom: 15px;
+}
+
+.skill-category:last-child {
+    margin-bottom: 0;
+}
+
+.skill-category-title {
+    font-size: 11px;
+    font-weight: bold;
+    color: #de648c;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.skill-icons {
     display: flex;
-    flex-wrap: wrap;
+    justify-content: space-between;
     gap: 8px;
 }
 
-.skill-tag {
-    padding: 4px 8px;
-    background-color: #e0e0e0;
-    border: 2px solid black;
-    font-size: 11px;
+/* Center icons when there are 3 or fewer */
+.skill-category:nth-child(2) .skill-icons {
+    justify-content: center;
+    gap: 70px;
+}
+
+.skill-category:nth-child(3) .skill-icons {
+    justify-content: center;
+    gap: 70px;
+}
+
+.skill-category:nth-child(4) .skill-icons {
+    justify-content: center;
+    gap: 50px;
+}
+
+.skill-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.skill-icon {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    transition: transform 0.2s ease;
+    filter: grayscale(0);
+}
+
+.skill-icon[alt="SQL"] {
+    filter: brightness(0) saturate(100%);
+}
+
+.skill-item:hover .skill-icon {
+    transform: scale(1.1);
+}
+
+.skill-name {
+    font-size: 10px;
+    color: #555;
+    text-align: center;
+    max-width: 60px;
+    word-wrap: break-word;
+}
+
+.education-section {
+    margin-bottom: 30px;
+}
+
+.education-section h4 {
+    margin: 0 0 15px 0;
+    font-size: 14px;
     color: #333;
 }
 
-.education-section p {
-    margin: 0;
+/* Timeline styling */
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background-color: #333;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+}
+
+.timeline-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -26px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #de648c;
+    border: 2px solid #333;
+    z-index: 1;
+}
+
+.timeline-content {
+    background-color: #f8f8f8;
+    border: 2px solid #333;
+    padding: 10px 12px;
+}
+
+.timeline-year {
+    font-size: 11px;
+    font-weight: bold;
+    color: #de648c;
+    margin-bottom: 4px;
+}
+
+.timeline-degree {
     font-size: 12px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 3px;
+}
+
+.timeline-institution {
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 3px;
+}
+
+.timeline-score {
+    font-size: 10px;
     color: #555;
+    margin-top: 4px;
+    font-style: italic;
 }
 
 .resume-link {

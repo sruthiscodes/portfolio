@@ -103,13 +103,45 @@ const portfolioData = {
         }
     ],
     aboutMe: {
-        bio: "I'm currently a senior at PES University in Bengaluru, grinding through my Computer Science Engineering degree (with equal parts love and chaos). I’ve been curious about tech ever since I got my first tiny Lenovo laptop at age four. That feeling just kept growing and today, I love building things trying to fix things with tech, one small step at a time. Still figuring it out. Still chasing that same spark :)",
-        skills: [
-            "Python", "TensorFlow", "PyTorch",
-            "Kafka", "PySpark", "SQL", "Snowflake",
-            "FastAPI", "Flask"
-          ],          
-          education: "Bachelor of Technology in Computer Science and Engineering\nPES University, Bengaluru\n2022–2026\n\nIndian School Certificate (12th Grade)\nNPS International, Chennai\nPercentage: 93.8%\n2022\n\nIndian Certificate of Secondary Education (10th Grade)\nNPS International, Chennai\nPercentage: 94.17%\n2020",
+        bio: "I'm currently a senior at PES University in Bengaluru, grinding through my Computer Science Engineering degree (with equal parts love and chaos). I got my first tiny Lenovo laptop at age four, which sparked my ever-curious brain. That feeling just kept growing and today, I build stuff, aiming to fix things with tech, one small step at a time. Still figuring it out. Still chasing that same spark :)",
+        skills: {
+            "Languages & Core": [
+                { name: "Python", icon: "python.svg" },
+                { name: "C", icon: "c.svg" },
+                { name: "SQL", icon: "mysql.svg" }
+            ],
+            "ML/AI Frameworks": [
+                { name: "TensorFlow", icon: "tensorflow.svg" },
+                { name: "PyTorch", icon: "pytorch.svg" },
+                { name: "scikit-learn", icon: "scikitlearn.svg" }
+            ],
+            "Data Engineering": [
+                { name: "Kafka", icon: "apachekafka.svg" },
+                { name: "Spark", icon: "apachespark.svg" },
+                { name: "Snowflake", icon: "snowflake.svg" },
+                { name: "Hadoop", icon: "apachehadoop.svg" }
+            ]
+        },
+        education: [
+            {
+                year: "2022–2026",
+                degree: "Bachelor of Technology in Computer Science and Engineering",
+                institution: "PES University, Bengaluru",
+                score: "CGPA: 9.05/10"
+            },
+            {
+                year: "2022",
+                degree: "Indian School Certificate (12th Grade)",
+                institution: "NPS International, Chennai",
+                score: "93.8%"
+            },
+            {
+                year: "2020",
+                degree: "Indian Certificate of Secondary Education (10th Grade)",
+                institution: "NPS International, Chennai",
+                score: "94.17%"
+            }
+        ],
           resume_link: "https://drive.google.com/file/d/1R0U3IRAHfpFIeKElfqRq9KWfT3EaOVR9/view?usp=sharing"
     },
     contact: {
@@ -209,7 +241,7 @@ function startPortfolioTransition() {
             
             // Show welcome dialogue after a short delay
             setTimeout(() => {
-                dialogueText.textContent = "Welcome to my little corner of the internet :) Make yourself at home!";
+                dialogueText.textContent = "Click around! Everything's interactive.";
                 dialogueBox.style.display = 'block';
             }, 500);
         }, 1400);
@@ -259,15 +291,39 @@ function renderModalContent(pageName) {
             content = `
                 <div class="about-container">
                     <p class="bio">${portfolioData.aboutMe.bio}</p>
-                    <div class="skills-section">
-                        <h4>Skills:</h4>
-                        <div class="skills-list">
-                            ${portfolioData.aboutMe.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                    
+                    <div class="education-section">
+                        <h4>Academic History</h4>
+                        <div class="timeline">
+                            ${portfolioData.aboutMe.education.map((edu, index) => `
+                                <div class="timeline-item">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-year">${edu.year}</div>
+                                        <div class="timeline-degree">${edu.degree}</div>
+                                        <div class="timeline-institution">${edu.institution}</div>
+                                        ${edu.score ? `<div class="timeline-score">Score: ${edu.score}</div>` : ''}
+                                    </div>
+                                </div>
+                            `).join('')}
                         </div>
                     </div>
-                    <div class="education-section">
-                        <h4>Education:</h4>
-                        <p>${portfolioData.aboutMe.education.replace(/\n/g, '<br>')}</p>
+                    
+                    <div class="skills-section">
+                        <h4>What I've Learnt</h4>
+                        ${Object.entries(portfolioData.aboutMe.skills).map(([category, skills]) => `
+                            <div class="skill-category">
+                                <div class="skill-category-title">${category}</div>
+                                <div class="skill-icons">
+                                    ${skills.map(skill => `
+                                        <div class="skill-item">
+                                            <img src="assets/icons/${skill.icon}" alt="${skill.name}" class="skill-icon">
+                                            <div class="skill-name">${skill.name}</div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `).join('')}
                     </div>
                 </div>
             `;
@@ -355,6 +411,19 @@ hotspots.forEach(hotspot => {
         const now = Date.now();
         if (now - lastHoverSoundTime > hoverSoundCooldown) {
             playSound(clickSound, 0.3); // Lower volume for hover
+            lastHoverSoundTime = now;
+        }
+    });
+});
+
+// Add hover sound to resume button and avatar
+const resumeButton = document.getElementById('resume-button');
+const hoverElements = [resumeButton, mainPageAvatar];
+hoverElements.forEach(element => {
+    element.addEventListener('mouseenter', () => {
+        const now = Date.now();
+        if (now - lastHoverSoundTime > hoverSoundCooldown) {
+            playSound(clickSound, 0.3);
             lastHoverSoundTime = now;
         }
     });
@@ -464,14 +533,12 @@ modal.addEventListener('click', (event) => {
 // Random dialogue system
 const dialogues = {
     anytime: [
-        "Feel free to snoop around tee-hee",
+        "Feel free to snoop around :)",
         "That computer over there? Full of projects.",
-        "Click around! Everything's interactive.",
-        "Psst... the bookshelf has all the good stuff.",
-        "My phone's right there if you wanna reach out."
+        "Psst... the bookshelf has all the good stuff."
     ],
     nighttime: [
-        "Late night coding? Me too."
+        "Late night coding? Me too!"
     ]
 };
 
