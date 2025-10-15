@@ -88,18 +88,6 @@ const portfolioData = {
             company: "dentsu, Bengaluru, India",
             dates: "June 2025 – July 2025",
             description: "• Built a scalable Model Context Protocol (MCP) framework for Merkury, managing 260+ million user profiles\n• Developed a secure natural language to SQL tool using Snowflake Cortex Analyst and Azure OpenAI\n• Used LangGraph to orchestrate an XGBoost-based lookalike audience model for automated targeting\n• Created MCP tools to enable agentic AI workflows across enterprise applications"
-        },
-        {
-            role: "Teaching Assistant — Data Analytics",
-            company: "PES University, Bengaluru, India",
-            dates: "June 2025 – Present",
-            description: "• Developed detailed worksheets on Recommender Systems for 300+ students\n• Designed problem statements and conducted hackathons engaging 300+ students in practical challenges"
-        },
-        {
-            role: "Teaching Assistant — Microprocessors and Computer Architecture",
-            company: "PES University, Bengaluru, India",
-            dates: "Jan 2025 – May 2025",
-            description: "• Prepared and reviewed lecture materials including summaries and practice questions\n• Graded lab work and assignments for over 100 students with constructive feedback"
         }
     ],
     aboutMe: {
