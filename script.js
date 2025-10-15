@@ -464,7 +464,7 @@ modal.addEventListener('click', (event) => {
 // Random dialogue system
 const dialogues = {
     anytime: [
-        "Hey there! Feel free to snoop around.",
+        "Feel free to snoop around tee-hee",
         "That computer over there? Full of projects.",
         "Click around! Everything's interactive.",
         "Psst... the bookshelf has all the good stuff.",
