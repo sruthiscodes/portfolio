@@ -1,3 +1,53 @@
+// Audio functionality
+const bgMusic = document.getElementById('bg-music');
+const clickSound = document.getElementById('click-sound');
+const chimeSound = document.getElementById('chime-sound');
+const whooshSound = document.getElementById('whoosh-sound');
+const musicToggle = document.getElementById('music-toggle');
+
+let isMusicPlaying = false;
+let lastHoverSoundTime = 0;
+const hoverSoundCooldown = 200; // milliseconds between hover sounds
+let currentOpenHotspot = null; // Track which hotspot opened the current modal
+
+// Function to play sound effect
+function playSound(sound, volume = 1.0, startTime = 0) {
+    if (sound) {
+        sound.volume = volume;
+        sound.currentTime = startTime;
+        sound.play().catch(err => console.log('Sound play failed:', err));
+    }
+}
+
+// Start background music after user interaction
+function startBackgroundMusic() {
+    if (!isMusicPlaying) {
+        bgMusic.volume = 0.3; // Set to 30% volume
+        bgMusic.play().then(() => {
+            isMusicPlaying = true;
+            musicToggle.classList.remove('music-muted');
+            musicToggle.classList.add('music-playing');
+        }).catch(err => console.log('Music play failed:', err));
+    }
+}
+
+// Toggle music on/off
+musicToggle.addEventListener('click', () => {
+    playSound(clickSound, 0.3);
+    if (isMusicPlaying) {
+        bgMusic.pause();
+        isMusicPlaying = false;
+        musicToggle.classList.remove('music-playing');
+        musicToggle.classList.add('music-muted');
+    } else {
+        bgMusic.play().then(() => {
+            isMusicPlaying = true;
+            musicToggle.classList.remove('music-muted');
+            musicToggle.classList.add('music-playing');
+        }).catch(err => console.log('Music play failed:', err));
+    }
+});
+
 // Portfolio data object
 const portfolioData = {
     projects: [
@@ -92,7 +142,11 @@ gameContainer.classList.add('hidden');
 introAvatar.src = 'avatar.png';
 
 // Intro screen click listener - clicking anywhere takes you to portfolio
-introScreen.addEventListener('click', startPortfolioTransition);
+introScreen.addEventListener('click', () => {
+    playSound(clickSound, 0.3);
+    startBackgroundMusic(); // Start music when entering portfolio
+    startPortfolioTransition();
+});
 
 // Function to handle portfolio transition
 function startPortfolioTransition() {
@@ -152,6 +206,12 @@ function startPortfolioTransition() {
             
             // Remove the morph avatar
             document.body.removeChild(morphAvatar);
+            
+            // Show welcome dialogue after a short delay
+            setTimeout(() => {
+                dialogueText.textContent = "Welcome to my little corner of the internet :) Make yourself at home!";
+                dialogueBox.style.display = 'block';
+            }, 500);
         }, 1400);
     }, 50);
 }
@@ -242,39 +302,150 @@ function renderModalContent(pageName) {
     modalContent.innerHTML = content;
 }
 
-// Function to show modal
-function showModal() {
+// Function to show modal with animation from hotspot position
+function showModal(hotspotElement) {
+    // Get the hotspot's position
+    const hotspotRect = hotspotElement.getBoundingClientRect();
+    const hotspotCenterX = hotspotRect.left + hotspotRect.width / 2;
+    const hotspotCenterY = hotspotRect.top + hotspotRect.height / 2;
+    
+    // Calculate offset from screen center
+    const screenCenterX = window.innerWidth / 2;
+    const screenCenterY = window.innerHeight / 2;
+    const offsetX = hotspotCenterX - screenCenterX;
+    const offsetY = hotspotCenterY - screenCenterY;
+    
+    // Remove visible class first to reset
+    modal.classList.remove('modal-visible');
+    
+    // Show modal
     modal.style.display = 'block';
+    
+    // Set initial position at hotspot location
+    modal.style.transform = `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px)) scale(0.3)`;
+    
+    // Force reflow to ensure transform is applied
+    modal.offsetHeight;
+    
+    // Trigger animation after a small delay
+    setTimeout(() => {
+        modal.classList.add('modal-visible');
+    }, 10);
 }
 
-// Function to hide modal
+// Function to hide modal with animation
 function hideModal() {
+    modal.classList.remove('modal-visible');
+    // Wait for animation to complete before hiding
+    setTimeout(() => {
     modal.style.display = 'none';
+        currentOpenHotspot = null; // Reset when modal closes
+    }, 300);
 }
 
-// Add click event listeners to hotspots
+// Function to check if modal is currently open
+function isModalOpen() {
+    return modal.style.display === 'block';
+}
+
+// Add hover sound effects to hotspots with cooldown
+const hotspots = [computerHotspot, phoneHotspot, bookshelfHotspot, bulletinHotspot];
+hotspots.forEach(hotspot => {
+    hotspot.addEventListener('mouseenter', () => {
+        const now = Date.now();
+        if (now - lastHoverSoundTime > hoverSoundCooldown) {
+            playSound(clickSound, 0.3); // Lower volume for hover
+            lastHoverSoundTime = now;
+        }
+    });
+});
+
+// Add click event listeners to hotspots with toggle functionality
 computerHotspot.addEventListener('click', () => {
+    if (isModalOpen() && currentOpenHotspot === 'computer') {
+        playSound(whooshSound, 0.8, 0.2);
+        hideModal();
+    } else {
+        playSound(whooshSound, 0.8, 0.2);
+        // If switching from another hotspot, instantly reset
+        if (isModalOpen()) {
+            modal.classList.remove('modal-visible');
+            modal.style.display = 'none';
+            currentOpenHotspot = null;
+        }
     renderModalContent('projects');
-    showModal();
+        setTimeout(() => {
+            showModal(computerHotspot);
+            currentOpenHotspot = 'computer';
+        }, 10);
+    }
 });
 
 phoneHotspot.addEventListener('click', () => {
+    if (isModalOpen() && currentOpenHotspot === 'phone') {
+        playSound(whooshSound, 0.8, 0.2);
+        hideModal();
+    } else {
+        playSound(whooshSound, 0.8, 0.2);
+        // If switching from another hotspot, instantly reset
+        if (isModalOpen()) {
+            modal.classList.remove('modal-visible');
+            modal.style.display = 'none';
+            currentOpenHotspot = null;
+        }
     renderModalContent('contact');
-    showModal();
+        setTimeout(() => {
+            showModal(phoneHotspot);
+            currentOpenHotspot = 'phone';
+        }, 10);
+    }
 });
 
 bookshelfHotspot.addEventListener('click', () => {
+    if (isModalOpen() && currentOpenHotspot === 'bookshelf') {
+        playSound(whooshSound, 0.8, 0.2);
+        hideModal();
+    } else {
+        playSound(whooshSound, 0.8, 0.2);
+        // If switching from another hotspot, instantly reset
+        if (isModalOpen()) {
+            modal.classList.remove('modal-visible');
+            modal.style.display = 'none';
+            currentOpenHotspot = null;
+        }
     renderModalContent('aboutMe');
-    showModal();
+        setTimeout(() => {
+            showModal(bookshelfHotspot);
+            currentOpenHotspot = 'bookshelf';
+        }, 10);
+    }
 });
 
 bulletinHotspot.addEventListener('click', () => {
+    if (isModalOpen() && currentOpenHotspot === 'bulletin') {
+        playSound(whooshSound, 0.8, 0.2);
+        hideModal();
+    } else {
+        playSound(whooshSound, 0.8, 0.2);
+        // If switching from another hotspot, instantly reset
+        if (isModalOpen()) {
+            modal.classList.remove('modal-visible');
+            modal.style.display = 'none';
+            currentOpenHotspot = null;
+        }
     renderModalContent('experiences');
-    showModal();
+        setTimeout(() => {
+            showModal(bulletinHotspot);
+            currentOpenHotspot = 'bulletin';
+        }, 10);
+    }
 });
 
 // Close button event listener
-closeButton.addEventListener('click', hideModal);
+closeButton.addEventListener('click', () => {
+    playSound(whooshSound, 0.8, 0.2);
+    hideModal();
+});
 
 // Escape key event listener
 document.addEventListener('keydown', (event) => {
@@ -290,10 +461,49 @@ modal.addEventListener('click', (event) => {
     }
 });
 
+// Random dialogue system
+const dialogues = {
+    anytime: [
+        "Hey there! Feel free to snoop around.",
+        "That computer over there? Full of projects.",
+        "Click around! Everything's interactive.",
+        "Psst... the bookshelf has all the good stuff.",
+        "My phone's right there if you wanna reach out."
+    ],
+    nighttime: [
+        "Late night coding? Me too."
+    ]
+};
+
+let lastDialogue = "";
+
+function getRandomDialogue() {
+    const hour = new Date().getHours();
+    const isNighttime = hour >= 20 || hour < 6; // 8 PM to 6 AM
+    
+    // Combine available dialogues
+    let availableDialogues = [...dialogues.anytime];
+    if (isNighttime) {
+        availableDialogues = availableDialogues.concat(dialogues.nighttime);
+    }
+    
+    // Filter out the last shown dialogue to avoid immediate repeats
+    if (lastDialogue) {
+        availableDialogues = availableDialogues.filter(d => d !== lastDialogue);
+    }
+    
+    // Pick random dialogue
+    const randomDialogue = availableDialogues[Math.floor(Math.random() * availableDialogues.length)];
+    lastDialogue = randomDialogue;
+    
+    return randomDialogue;
+}
+
 // Avatar click event listener for dialogue box
 mainPageAvatar.addEventListener('click', () => {
+    playSound(clickSound, 0.3);
     if (dialogueBox.style.display === 'none' || dialogueBox.style.display === '') {
-        dialogueText.textContent = "Explore by interacting with items. (Tip: Start with the bookshelf :D)";
+        dialogueText.textContent = getRandomDialogue();
         dialogueBox.style.display = 'block';
     } else {
         dialogueBox.style.display = 'none';
