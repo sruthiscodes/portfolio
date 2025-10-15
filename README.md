@@ -4,14 +4,14 @@
 |                   SRUTHI SIVAKUMAR                 |
 ──────────────────────────────────────────────────────
 |                                                    |
-| CLASS      :    Rookie Developer                   |
-| LEVEL      :    Senior (Final Year CS Student)     |
-| LOCATION   :    Bengaluru, India                   |
+|   CLASS      :    Rookie Developer                 |
+|   LEVEL      :    Senior (Final Year CS Student)   |
+|   LOCATION   :    Bengaluru, India                 |
 |                                                    |
-| SPECIAL ABILITIES:                                 |
-| - Staying up late at night for no good reason      |
-| - Adrenaline-fueled productivity                   |
-| - Opening 142 tabs and forgetting why              | 
+|   SPECIAL ABILITIES:                               |
+|   - Staying up late at night for no good reason    |
+|   - Adrenaline-fueled productivity                 |
+|   - Opening 142 tabs and forgetting why            | 
 |                                                    |
 ──────────────────────────────────────────────────────
 |                                                    |
