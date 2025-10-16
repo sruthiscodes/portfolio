@@ -115,7 +115,7 @@ const portfolioData = {
                 year: "2022–2026",
                 degree: "Bachelor of Technology in Computer Science and Engineering",
                 institution: "PES University, Bengaluru",
-                score: "CGPA: 9.05/10"
+                score: "9.05/10"
             },
             {
                 year: "2022",
@@ -236,6 +236,9 @@ function startPortfolioTransition() {
     }, 50);
 }
 
+// Project carousel state
+let currentProjectIndex = 0;
+
 // Function to render modal content based on page name
 function renderModalContent(pageName) {
     let title = '';
@@ -243,24 +246,29 @@ function renderModalContent(pageName) {
 
     switch(pageName) {
         case 'projects':
-            title = 'My Projects';
+            title = 'What I\'ve built';
+            const project = portfolioData.projects[currentProjectIndex];
             content = `
-                <div class="projects-container">
-                    ${portfolioData.projects.map(project => `
+                <div class="projects-carousel">
                         <div class="project-item">
+                        <div class="project-header">
                             <h4 class="project-title">${project.title}</h4>
-                            <p class="project-description">${project.description}</p>
-                            <div class="project-links">
-                                <a href="${project.github_link}" target="_blank" class="project-link github-link">GitHub</a>
-                            </div>
+                            <a href="${project.github_link}" target="_blank" class="github-icon-link" title="View on GitHub">
+                                <img src="assets/icons/github.svg" alt="GitHub" class="github-icon">
+                            </a>
                         </div>
-                    `).join('')}
+                        <p class="project-description">${project.description}</p>
+                    </div>
+                    <div class="carousel-controls">
+                        <button class="carousel-btn prev-btn" id="prev-project">◀</button>
+                        <button class="carousel-btn next-btn" id="next-project">▶</button>
+                    </div>
                 </div>
             `;
             break;
 
         case 'experiences':
-            title = 'Work Experience';
+            title = 'Work I\'ve Done';
             content = `
                 <div class="experiences-container">
                     ${portfolioData.experiences.map(exp => `
@@ -275,7 +283,7 @@ function renderModalContent(pageName) {
             break;
 
         case 'aboutMe':
-            title = 'About Me';
+            title = 'Who I Am';
             content = `
                 <div class="about-container">
                     <p class="bio">${portfolioData.aboutMe.bio}</p>
@@ -318,20 +326,22 @@ function renderModalContent(pageName) {
             break;
 
         case 'contact':
-            title = 'Get In Touch';
+            title = 'Reach out';
             content = `
                 <div class="contact-container">
-                    <div class="contact-item">
-                        <h4>Email</h4>
-                        <a href="mailto:${portfolioData.contact.email}" class="contact-link">${portfolioData.contact.email}</a>
-                    </div>
-                    <div class="contact-item">
-                        <h4>LinkedIn</h4>
-                        <a href="${portfolioData.contact.linkedin}" target="_blank" class="contact-link">Connect with me</a>
-                    </div>
-                    <div class="contact-item">
-                        <h4>GitHub</h4>
-                        <a href="${portfolioData.contact.github_profile}" target="_blank" class="contact-link">View my code</a>
+                    <div class="contact-icons-wrapper">
+                        <a href="mailto:${portfolioData.contact.email}" class="contact-icon-item" title="Email me">
+                            <img src="assets/icons/gmail.svg" alt="Email" class="contact-icon">
+                            <div class="contact-label">Email</div>
+                        </a>
+                        <a href="${portfolioData.contact.linkedin}" target="_blank" class="contact-icon-item" title="Connect on LinkedIn">
+                            <img src="assets/icons/linkedin.svg" alt="LinkedIn" class="contact-icon">
+                            <div class="contact-label">LinkedIn</div>
+                        </a>
+                        <a href="${portfolioData.contact.github_profile}" target="_blank" class="contact-icon-item" title="View my GitHub">
+                            <img src="assets/icons/refinedgithub.svg" alt="GitHub" class="contact-icon">
+                            <div class="contact-label">GitHub</div>
+                        </a>
                     </div>
                 </div>
             `;
@@ -392,7 +402,7 @@ function isModalOpen() {
     return modal.style.display === 'block';
 }
 
-// Add hover sound effects to hotspots with cooldown
+// Add hover sound effects to hotspots with cooldown and avatar reaction
 const hotspots = [computerHotspot, phoneHotspot, bookshelfHotspot, bulletinHotspot];
 hotspots.forEach(hotspot => {
     hotspot.addEventListener('mouseenter', () => {
@@ -401,6 +411,13 @@ hotspots.forEach(hotspot => {
             playSound(clickSound, 0.3); // Lower volume for hover
             lastHoverSoundTime = now;
         }
+        // Switch to yay avatar
+        mainPageAvatar.src = 'assets/pics/avatar-yay.png';
+    });
+    
+    hotspot.addEventListener('mouseleave', () => {
+        // Switch back to normal avatar
+        mainPageAvatar.src = 'assets/pics/avatar.png';
     });
 });
 
@@ -422,6 +439,7 @@ computerHotspot.addEventListener('click', () => {
     if (isModalOpen() && currentOpenHotspot === 'computer') {
         playSound(whooshSound, 0.8, 0.2);
         hideModal();
+        currentProjectIndex = 0; // Reset project index
     } else {
         playSound(whooshSound, 0.8, 0.2);
         // If switching from another hotspot, instantly reset
@@ -430,10 +448,12 @@ computerHotspot.addEventListener('click', () => {
             modal.style.display = 'none';
             currentOpenHotspot = null;
         }
+        currentProjectIndex = 0; // Reset to first project
     renderModalContent('projects');
         setTimeout(() => {
             showModal(computerHotspot);
             currentOpenHotspot = 'computer';
+            attachProjectCarouselListeners();
         }, 10);
     }
 });
@@ -497,6 +517,38 @@ bulletinHotspot.addEventListener('click', () => {
         }, 10);
     }
 });
+
+// Function to attach project carousel listeners
+function attachProjectCarouselListeners() {
+    const prevBtn = document.getElementById('prev-project');
+    const nextBtn = document.getElementById('next-project');
+    
+    if (prevBtn && nextBtn) {
+        prevBtn.addEventListener('click', () => {
+            playSound(clickSound, 0.3);
+            // Loop back to last project if at first
+            if (currentProjectIndex === 0) {
+                currentProjectIndex = portfolioData.projects.length - 1;
+            } else {
+                currentProjectIndex--;
+            }
+            renderModalContent('projects');
+            attachProjectCarouselListeners();
+        });
+        
+        nextBtn.addEventListener('click', () => {
+            playSound(clickSound, 0.3);
+            // Loop back to first project if at last
+            if (currentProjectIndex === portfolioData.projects.length - 1) {
+                currentProjectIndex = 0;
+            } else {
+                currentProjectIndex++;
+            }
+            renderModalContent('projects');
+            attachProjectCarouselListeners();
+        });
+    }
+}
 
 // Close button event listener
 closeButton.addEventListener('click', () => {
