@@ -115,7 +115,7 @@ const portfolioData = {
                 year: "2022–2026",
                 degree: "Bachelor of Technology in Computer Science and Engineering",
                 institution: "PES University, Bengaluru",
-                score: "9.05/10"
+                score: "9.1/10"
             },
             {
                 year: "2022",
