@@ -1,0 +1,1076 @@
+// Audio functionality
+const bgMusic = document.getElementById('bg-music');
+const clickSound = document.getElementById('click-sound');
+const chimeSound = document.getElementById('chime-sound');
+const whooshSound = document.getElementById('whoosh-sound');
+const musicToggle = document.getElementById('music-toggle');
+
+let isMusicPlaying = false;
+let lastHoverSoundTime = 0;
+const hoverSoundCooldown = 200; // milliseconds between hover sounds
+let currentOpenHotspot = null; // Track which hotspot opened the current modal
+
+// Function to play sound effect
+function playSound(sound, volume = 1.0, startTime = 0) {
+    if (sound) {
+        sound.volume = volume;
+        sound.currentTime = startTime;
+        sound.play().catch(err => console.log('Sound play failed:', err));
+    }
+}
+
+// Start background music after user interaction
+function startBackgroundMusic() {
+    if (!isMusicPlaying) {
+        bgMusic.volume = 0.3; // Set to 30% volume
+        bgMusic.play().then(() => {
+            isMusicPlaying = true;
+            musicToggle.classList.remove('music-muted');
+            musicToggle.classList.add('music-playing');
+        }).catch(err => console.log('Music play failed:', err));
+    }
+}
+
+// Toggle music on/off
+musicToggle.addEventListener('click', () => {
+    playSound(clickSound, 0.3);
+    if (isMusicPlaying) {
+        bgMusic.pause();
+        isMusicPlaying = false;
+        musicToggle.classList.remove('music-playing');
+        musicToggle.classList.add('music-muted');
+    } else {
+        bgMusic.play().then(() => {
+            isMusicPlaying = true;
+            musicToggle.classList.remove('music-muted');
+            musicToggle.classList.add('music-playing');
+        }).catch(err => console.log('Music play failed:', err));
+    }
+});
+
+// Portfolio data object
+const portfolioData = {
+    projects: [
+        {
+            title: "Neurocontrol System for Prosthetic Devices",
+            description: "Developing a non-invasive brain-computer interface that decodes EEG signals from the motor cortex to control assistive prosthetic devices. This project involves applying Continuous Wavelet Transform on PhysioNet EEG motor imagery data and building a spatio-temporal CNN for real-time classification using Python, TensorFlow, MNE, and CWT.",
+            github_link: "https://github.com/sruthiscodes/capstone"
+        },
+        {
+            title: "Multi-Modal Adventure Story Engine",
+            description: "Designed and built a dynamic storytelling engine that combines local large language models with both text and visual outputs to create immersive narrative scenes. Utilized Python, llama.cpp, ChromaDB, and Replicate API for image diffusion, deploying a FastAPI backend to enable multi-turn user interactions and maintain plot continuity.",
+            github_link: "https://github.com/sruthiscodes/adventure-story-game"
+        },
+        {
+            title: "Gesture-Controlled Drone",
+            description: "Developed an innovative gesture-based drone control system using ROS 2 Humble, simulated in Gazebo. Integrated MediaPipe for real-time hand gesture recognition and landmark detection, and implemented the control logic in Python to translate gestures into drone commands. Structured the project with modular ROS 2 packages, managed via CMake and setup.py, and built with colcon on Linux for seamless deployment.",
+            github_link: "https://github.com/sruthiscodes/gesture-controlled-drone"
+        },
+        {
+            title: "EmoStream – Real-Time Reaction Pipeline",
+            description: "Created a real-time emoji-based feedback system for live video content engagement. Developed asynchronous Flask APIs with millisecond latency, integrated Kafka's pub/sub architecture for high-throughput event streaming, and processed events with Spark Streaming to enable dynamic content personalization.",
+            github_link: "https://github.com/sruthiscodes/emostream"
+        },
+        {
+            title: "Secure Live Video Streaming Platform",
+            description: "Built a privacy-focused live video transmission system optimized for low-latency and encrypted delivery across devices. Implemented SSL encryption alongside an OpenCV-based frame processing pipeline to enable secure, real-time peer-to-peer media exchange over TCP sockets.",
+            github_link: "https://github.com/sruthiscodes/live-video-streaming"
+        },
+        {
+            title: "Nimble: Scalable Restaurant Discovery & Ordering Platform",
+            description: "Created a full-stack eCommerce application using the MERN stack, featuring a scalable design for restaurant discovery and ordering. Developed RESTful APIs for menu browsing, cart management, and secure order placement, with robust user authentication, session management, and real-time order tracking to enhance user experience.",
+            github_link: "https://github.com/sruthiscodes/nimble"
+        }
+    ],
+    experiences: [
+        {
+            role: "Summer Intern",
+            company: "dentsu, Bengaluru, India",
+            dates: "June 2025 – July 2025",
+            description: "• Built a scalable Model Context Protocol (MCP) framework for Merkury, managing 260+ million user profiles\n• Developed a secure natural language to SQL tool using Snowflake Cortex Analyst and Azure OpenAI\n• Used LangGraph to orchestrate an XGBoost-based lookalike audience model for automated targeting\n• Created MCP tools to enable agentic AI workflows across enterprise applications"
+        }
+    ],
+    aboutMe: {
+        bio: "I'm currently a senior at PES University in Bengaluru, grinding through my Computer Science Engineering degree (with equal parts love and chaos). I got my first tiny Lenovo laptop at age four, which sparked my ever-curious brain. That feeling just kept growing and today, I build stuff, aiming to fix things with tech, one small step at a time. Still figuring it out. Still chasing that same spark :)",
+        skills: {
+            "Languages & Core": [
+                { name: "Python", icon: "python.svg" },
+                { name: "C", icon: "c.svg" },
+                { name: "SQL", icon: "mysql.svg" }
+            ],
+            "ML/AI Frameworks": [
+                { name: "TensorFlow", icon: "tensorflow.svg" },
+                { name: "PyTorch", icon: "pytorch.svg" },
+                { name: "scikit-learn", icon: "scikitlearn.svg" }
+            ],
+            "Data Engineering": [
+                { name: "Kafka", icon: "apachekafka.svg" },
+                { name: "Spark", icon: "apachespark.svg" },
+                { name: "Snowflake", icon: "snowflake.svg" },
+                { name: "Hadoop", icon: "apachehadoop.svg" }
+            ]
+        },
+        education: [
+            {
+                year: "2022–2026",
+                degree: "Bachelor of Technology in Computer Science and Engineering",
+                institution: "PES University, Bengaluru",
+                score: "9.05/10"
+            },
+            {
+                year: "2022",
+                degree: "Indian School Certificate (12th Grade)",
+                institution: "NPS International, Chennai",
+                score: "93.8%"
+            },
+            {
+                year: "2020",
+                degree: "Indian Certificate of Secondary Education (10th Grade)",
+                institution: "NPS International, Chennai",
+                score: "94.17%"
+            }
+        ],
+          resume_link: "https://drive.google.com/file/d/1R0U3IRAHfpFIeKElfqRq9KWfT3EaOVR9/view?usp=sharing"
+    },
+    contact: {
+        email: "sruthisivakumar31@gmail.com",
+        linkedin: "https://www.linkedin.com/in/sruthisivakumar31/",
+        github_profile: "https://github.com/sruthiscodes"
+    }
+};
+
+// Get DOM elements
+const introScreen = document.getElementById('intro-screen');
+const introAvatar = document.getElementById('intro-avatar');
+const gameContainer = document.getElementById('game-container');
+const mainPageAvatar = document.getElementById('avatar');
+const dialogueBox = document.getElementById('dialogue-box');
+const dialogueText = document.getElementById('dialogue-text');
+const computerHotspot = document.getElementById('hotspot-computer');
+const phoneHotspot = document.getElementById('hotspot-phone');
+const bookshelfHotspot = document.getElementById('hotspot-bookshelf');
+const bulletinHotspot = document.getElementById('hotspot-bulletin');
+const cloudsHotspot = document.getElementById('hotspot-clouds');
+const modal = document.getElementById('popup-modal');
+const modalTitle = document.getElementById('modal-title');
+const modalContent = document.getElementById('modal-content');
+const closeButton = document.getElementById('close-button');
+
+// Initial state - hide main content
+gameContainer.classList.add('hidden');
+
+// Set intro avatar source
+introAvatar.src = 'assets/pics/avatar.png';
+
+// Intro screen click listener - clicking anywhere takes you to portfolio
+introScreen.addEventListener('click', () => {
+    playSound(clickSound, 0.3);
+    startBackgroundMusic(); // Start music when entering portfolio
+    startPortfolioTransition();
+});
+
+// Function to handle portfolio transition
+function startPortfolioTransition() {
+    // Hide the main page avatar initially
+    mainPageAvatar.style.opacity = '0';
+    
+    // Get current positions before any changes
+    const currentRect = introAvatar.getBoundingClientRect();
+    const currentTop = currentRect.top;
+    const currentLeft = currentRect.left;
+    
+    // Create a clone of the avatar for the morph animation
+    const morphAvatar = introAvatar.cloneNode(true);
+    morphAvatar.style.position = 'fixed';
+    morphAvatar.style.top = `${currentTop}px`;
+    morphAvatar.style.left = `${currentLeft}px`;
+    morphAvatar.style.zIndex = '1001';
+    morphAvatar.style.transition = 'all 1.2s cubic-bezier(0.4, 0, 0.2, 1)';
+    morphAvatar.style.pointerEvents = 'none';
+    
+    // Hide the original avatar
+    introAvatar.style.opacity = '0';
+    
+    // Add the morph avatar to the body
+    document.body.appendChild(morphAvatar);
+    
+    // Reveal game container
+    gameContainer.classList.remove('hidden');
+    
+    // Wait for the game container to be visible, then get target positions
+    setTimeout(() => {
+        // Get target avatar position relative to viewport
+        const targetRect = mainPageAvatar.getBoundingClientRect();
+        const targetTop = targetRect.top;
+        const targetLeft = targetRect.left;
+        const targetWidth = targetRect.width;
+        const targetHeight = targetRect.height;
+
+        // Start the morph animation
+        requestAnimationFrame(() => {
+            morphAvatar.style.top = `${targetTop}px`;
+            morphAvatar.style.left = `${targetLeft}px`;
+            morphAvatar.style.width = `${targetWidth}px`;
+            morphAvatar.style.height = `${targetHeight}px`;
+        });
+
+        // Start intro screen fade (slightly delayed)
+        setTimeout(() => {
+            introScreen.style.opacity = '0';
+        }, 200);
+
+        // Clean up and show main avatar
+        setTimeout(() => {
+            introScreen.style.display = 'none';
+            mainPageAvatar.style.opacity = '1';
+            mainPageAvatar.style.transition = 'opacity 0.3s ease';
+            
+            // Remove the morph avatar
+            document.body.removeChild(morphAvatar);
+            
+            // Show welcome dialogue after a short delay
+            setTimeout(() => {
+                dialogueText.textContent = "Click around! Everything's interactive.";
+                dialogueBox.style.display = 'block';
+            }, 500);
+        }, 1400);
+    }, 50);
+}
+
+// Project carousel state
+let currentProjectIndex = 0;
+
+// Function to render modal content based on page name
+function renderModalContent(pageName) {
+    let title = '';
+    let content = '';
+
+    switch(pageName) {
+        case 'projects':
+            title = 'What I\'ve built';
+            const project = portfolioData.projects[currentProjectIndex];
+            content = `
+                <div class="projects-carousel">
+                        <div class="project-item">
+                        <div class="project-header">
+                            <h4 class="project-title">${project.title}</h4>
+                            <a href="${project.github_link}" target="_blank" class="github-icon-link" title="View on GitHub">
+                                <img src="assets/icons/github.svg" alt="GitHub" class="github-icon">
+                            </a>
+                        </div>
+                        <p class="project-description">${project.description}</p>
+                    </div>
+                    <div class="carousel-controls">
+                        <button class="carousel-btn prev-btn" id="prev-project">◀</button>
+                        <button class="carousel-btn next-btn" id="next-project">▶</button>
+                    </div>
+                </div>
+            `;
+            break;
+
+        case 'experiences':
+            title = 'Work I\'ve Done';
+            content = `
+                <div class="experiences-container">
+                    ${portfolioData.experiences.map(exp => `
+                        <div class="experience-item">
+                            <h4 class="experience-role">${exp.role}</h4>
+                            <p class="experience-company">${exp.company} • ${exp.dates}</p>
+                            <div class="experience-description">${exp.description.replace(/\n/g, '<br>')}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            break;
+
+        case 'aboutMe':
+            title = 'Who I Am';
+            content = `
+                <div class="about-container">
+                    <p class="bio">${portfolioData.aboutMe.bio}</p>
+                    
+                    <div class="education-section">
+                        <h4>Academic History</h4>
+                        <div class="timeline">
+                            ${portfolioData.aboutMe.education.map((edu, index) => `
+                                <div class="timeline-item">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-year">${edu.year}</div>
+                                        <div class="timeline-degree">${edu.degree}</div>
+                                        <div class="timeline-institution">${edu.institution}</div>
+                                        ${edu.score ? `<div class="timeline-score">Score: ${edu.score}</div>` : ''}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="skills-section">
+                        <h4>What I've Learnt</h4>
+                        ${Object.entries(portfolioData.aboutMe.skills).map(([category, skills]) => `
+                            <div class="skill-category">
+                                <div class="skill-category-title">${category}</div>
+                                <div class="skill-icons">
+                                    ${skills.map(skill => `
+                                        <div class="skill-item">
+                                            <img src="assets/icons/${skill.icon}" alt="${skill.name}" class="skill-icon">
+                                            <div class="skill-name">${skill.name}</div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            break;
+
+        case 'contact':
+            title = 'Reach out';
+            content = `
+                <div class="contact-container">
+                    <div class="contact-icons-wrapper">
+                        <a href="mailto:${portfolioData.contact.email}" class="contact-icon-item" title="Email me">
+                            <img src="assets/icons/gmail.svg" alt="Email" class="contact-icon">
+                            <div class="contact-label">Email</div>
+                        </a>
+                        <a href="${portfolioData.contact.linkedin}" target="_blank" class="contact-icon-item" title="Connect on LinkedIn">
+                            <img src="assets/icons/linkedin.svg" alt="LinkedIn" class="contact-icon">
+                            <div class="contact-label">LinkedIn</div>
+                        </a>
+                        <a href="${portfolioData.contact.github_profile}" target="_blank" class="contact-icon-item" title="View my GitHub">
+                            <img src="assets/icons/refinedgithub.svg" alt="GitHub" class="contact-icon">
+                            <div class="contact-label">GitHub</div>
+                        </a>
+                    </div>
+                </div>
+            `;
+            break;
+
+        case 'cloudGame':
+            title = 'Cloud Hopper';
+            content = `
+                <div class="cloud-game-instructions">
+                    Use Arrow Keys or WASD to move! Jump from cloud to cloud going upwards! 🌥️
+                </div>
+                <div class="cloud-game-container" id="cloud-game-area">
+                    <div class="cloud-game-score" id="cloud-score">Clouds Jumped: 0</div>
+                </div>
+                <button class="cloud-game-restart" id="restart-game">Restart Game</button>
+            `;
+            break;
+
+        default:
+            title = 'Error';
+            content = '<p>Content not found.</p>';
+    }
+
+    modalTitle.textContent = title;
+    modalContent.innerHTML = content;
+}
+
+// Function to show modal with animation from hotspot position
+function showModal(hotspotElement) {
+    // Get the hotspot's position
+    const hotspotRect = hotspotElement.getBoundingClientRect();
+    const hotspotCenterX = hotspotRect.left + hotspotRect.width / 2;
+    const hotspotCenterY = hotspotRect.top + hotspotRect.height / 2;
+    
+    // Calculate offset from screen center
+    const screenCenterX = window.innerWidth / 2;
+    const screenCenterY = window.innerHeight / 2;
+    const offsetX = hotspotCenterX - screenCenterX;
+    const offsetY = hotspotCenterY - screenCenterY;
+    
+    // Remove visible class first to reset
+    modal.classList.remove('modal-visible');
+    
+    // Show modal
+    modal.style.display = 'block';
+    
+    // Set initial position at hotspot location
+    modal.style.transform = `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px)) scale(0.3)`;
+    
+    // Force reflow to ensure transform is applied
+    modal.offsetHeight;
+    
+    // Trigger animation after a small delay
+    setTimeout(() => {
+        modal.classList.add('modal-visible');
+    }, 10);
+}
+
+// Function to hide modal with animation
+function hideModal() {
+    modal.classList.remove('modal-visible');
+    // Wait for animation to complete before hiding
+    setTimeout(() => {
+    modal.style.display = 'none';
+        currentOpenHotspot = null; // Reset when modal closes
+    }, 300);
+}
+
+// Function to check if modal is currently open
+function isModalOpen() {
+    return modal.style.display === 'block';
+}
+
+// Add hover sound effects to hotspots with cooldown and avatar reaction
+const hotspots = [computerHotspot, phoneHotspot, bookshelfHotspot, bulletinHotspot, cloudsHotspot];
+hotspots.forEach(hotspot => {
+    hotspot.addEventListener('mouseenter', () => {
+        const now = Date.now();
+        if (now - lastHoverSoundTime > hoverSoundCooldown) {
+            playSound(clickSound, 0.3); // Lower volume for hover
+            lastHoverSoundTime = now;
+        }
+        // Switch to yay avatar
+        mainPageAvatar.src = 'assets/pics/avatar-yay.png';
+    });
+    
+    hotspot.addEventListener('mouseleave', () => {
+        // Switch back to normal avatar
+        mainPageAvatar.src = 'assets/pics/avatar.png';
+    });
+});
+
+// Add hover sound to resume button and avatar
+const resumeButton = document.getElementById('resume-button');
+const hoverElements = [resumeButton, mainPageAvatar];
+hoverElements.forEach(element => {
+    element.addEventListener('mouseenter', () => {
+        const now = Date.now();
+        if (now - lastHoverSoundTime > hoverSoundCooldown) {
+            playSound(clickSound, 0.3);
+            lastHoverSoundTime = now;
+        }
+    });
+});
+
+// Add click event listeners to hotspots with toggle functionality
+computerHotspot.addEventListener('click', () => {
+    if (isModalOpen() && currentOpenHotspot === 'computer') {
+        playSound(whooshSound, 0.8, 0.2);
+        hideModal();
+        currentProjectIndex = 0; // Reset project index
+    } else {
+        playSound(whooshSound, 0.8, 0.2);
+        // If switching from another hotspot, instantly reset
+        if (isModalOpen()) {
+            modal.classList.remove('modal-visible');
+            modal.style.display = 'none';
+            currentOpenHotspot = null;
+        }
+        currentProjectIndex = 0; // Reset to first project
+    renderModalContent('projects');
+        setTimeout(() => {
+            showModal(computerHotspot);
+            currentOpenHotspot = 'computer';
+            attachProjectCarouselListeners();
+        }, 10);
+    }
+});
+
+phoneHotspot.addEventListener('click', () => {
+    if (isModalOpen() && currentOpenHotspot === 'phone') {
+        playSound(whooshSound, 0.8, 0.2);
+        hideModal();
+    } else {
+        playSound(whooshSound, 0.8, 0.2);
+        // If switching from another hotspot, instantly reset
+        if (isModalOpen()) {
+            modal.classList.remove('modal-visible');
+            modal.style.display = 'none';
+            currentOpenHotspot = null;
+        }
+    renderModalContent('contact');
+        setTimeout(() => {
+            showModal(phoneHotspot);
+            currentOpenHotspot = 'phone';
+        }, 10);
+    }
+});
+
+bookshelfHotspot.addEventListener('click', () => {
+    if (isModalOpen() && currentOpenHotspot === 'bookshelf') {
+        playSound(whooshSound, 0.8, 0.2);
+        hideModal();
+    } else {
+        playSound(whooshSound, 0.8, 0.2);
+        // If switching from another hotspot, instantly reset
+        if (isModalOpen()) {
+            modal.classList.remove('modal-visible');
+            modal.style.display = 'none';
+            currentOpenHotspot = null;
+        }
+    renderModalContent('aboutMe');
+        setTimeout(() => {
+            showModal(bookshelfHotspot);
+            currentOpenHotspot = 'bookshelf';
+        }, 10);
+    }
+});
+
+bulletinHotspot.addEventListener('click', () => {
+    if (isModalOpen() && currentOpenHotspot === 'bulletin') {
+        playSound(whooshSound, 0.8, 0.2);
+        hideModal();
+    } else {
+        playSound(whooshSound, 0.8, 0.2);
+        // If switching from another hotspot, instantly reset
+        if (isModalOpen()) {
+            modal.classList.remove('modal-visible');
+            modal.style.display = 'none';
+            currentOpenHotspot = null;
+        }
+    renderModalContent('experiences');
+        setTimeout(() => {
+            showModal(bulletinHotspot);
+            currentOpenHotspot = 'bulletin';
+        }, 10);
+    }
+});
+
+cloudsHotspot.addEventListener('click', () => {
+    if (isModalOpen() && currentOpenHotspot === 'clouds') {
+        playSound(whooshSound, 0.8, 0.2);
+        hideModal();
+        stopCloudGame();
+    } else {
+        playSound(whooshSound, 0.8, 0.2);
+        // If switching from another hotspot, instantly reset
+        if (isModalOpen()) {
+            modal.classList.remove('modal-visible');
+            modal.style.display = 'none';
+            currentOpenHotspot = null;
+            stopCloudGame();
+        }
+        renderModalContent('cloudGame');
+        setTimeout(() => {
+            showModal(cloudsHotspot);
+            currentOpenHotspot = 'clouds';
+            initCloudGame();
+        }, 10);
+    }
+});
+
+// Function to attach project carousel listeners
+function attachProjectCarouselListeners() {
+    const prevBtn = document.getElementById('prev-project');
+    const nextBtn = document.getElementById('next-project');
+    
+    if (prevBtn && nextBtn) {
+        prevBtn.addEventListener('click', () => {
+            playSound(clickSound, 0.3);
+            // Loop back to last project if at first
+            if (currentProjectIndex === 0) {
+                currentProjectIndex = portfolioData.projects.length - 1;
+            } else {
+                currentProjectIndex--;
+            }
+            renderModalContent('projects');
+            attachProjectCarouselListeners();
+        });
+        
+        nextBtn.addEventListener('click', () => {
+            playSound(clickSound, 0.3);
+            // Loop back to first project if at last
+            if (currentProjectIndex === portfolioData.projects.length - 1) {
+                currentProjectIndex = 0;
+            } else {
+                currentProjectIndex++;
+            }
+            renderModalContent('projects');
+            attachProjectCarouselListeners();
+        });
+    }
+}
+
+// Close button event listener
+closeButton.addEventListener('click', () => {
+    playSound(whooshSound, 0.8, 0.2);
+    hideModal();
+});
+
+// Escape key event listener
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        hideModal();
+    }
+});
+
+// Close modal when clicking outside of it
+modal.addEventListener('click', (event) => {
+    if (event.target === modal) {
+        hideModal();
+    }
+});
+
+// Random dialogue system
+const dialogues = {
+    anytime: [
+        "Feel free to snoop around :)",
+        "That computer over there? Full of projects.",
+        "Psst... the bookshelf has all the good stuff."
+    ],
+    nighttime: [
+        "Late night coding? Me too!"
+    ]
+};
+
+let lastDialogue = "";
+
+function getRandomDialogue() {
+    const hour = new Date().getHours();
+    const isNighttime = hour >= 20 || hour < 6; // 8 PM to 6 AM
+    
+    // Combine available dialogues
+    let availableDialogues = [...dialogues.anytime];
+    if (isNighttime) {
+        availableDialogues = availableDialogues.concat(dialogues.nighttime);
+    }
+    
+    // Filter out the last shown dialogue to avoid immediate repeats
+    if (lastDialogue) {
+        availableDialogues = availableDialogues.filter(d => d !== lastDialogue);
+    }
+    
+    // Pick random dialogue
+    const randomDialogue = availableDialogues[Math.floor(Math.random() * availableDialogues.length)];
+    lastDialogue = randomDialogue;
+    
+    return randomDialogue;
+}
+
+// Avatar click event listener for dialogue box
+mainPageAvatar.addEventListener('click', () => {
+    playSound(clickSound, 0.3);
+    if (dialogueBox.style.display === 'none' || dialogueBox.style.display === '') {
+        dialogueText.textContent = getRandomDialogue();
+        dialogueBox.style.display = 'block';
+    } else {
+        dialogueBox.style.display = 'none';
+    }
+});
+
+// Hide dialogue box when clicking elsewhere
+document.addEventListener('click', (event) => {
+    if (dialogueBox.style.display === 'block' && 
+        !mainPageAvatar.contains(event.target) && 
+        !dialogueBox.contains(event.target)) {
+        dialogueBox.style.display = 'none';
+    }
+});
+
+// ===== CLOUD HOPPER GAME LOGIC =====
+
+let cloudGameState = {
+    score: 0,
+    isPlaying: false,
+    clouds: [],
+    avatar: null,
+    gameArea: null,
+    scoreDisplay: null,
+    gameLoopInterval: null,
+    avatarX: 35, // percentage
+    avatarY: 300, // pixels from top (world coordinates)
+    avatarVelocityX: 0,
+    avatarVelocityY: 0,
+    gravity: 0.1,           // MODIFIED: Tuned for precise jump height.
+    jumpPower: -4,          // MODIFIED: Tuned for precise jump height.
+    moveSpeed: 0.15,        // MODIFIED: Reduced for better control
+    isOnCloud: false,
+    canJump: false,         // ADDED: Flag to ensure reliable jumping.
+    currentCloud: null,
+    jumpedClouds: new Set(),
+    keys: {},
+    cameraY: 0,
+    nextCloudY: 230,        // Y position for the next cloud layer.
+    cloudSpawnInterval: 80, // Vertical spacing between cloud layers.
+    lastCloudX: 35          // ADDED: Tracks the last cloud's X position to ensure a solvable path.
+};
+
+const cloudImages = ['cloud1.svg', 'cloud2.svg', 'cloud3.svg', 'cloud4.svg'];
+const avatarJumpImages = ['avatar-jump.svg', 'avatar-jump-2.svg'];
+
+function initCloudGame() {
+    const gameArea = document.getElementById('cloud-game-area');
+    const scoreDisplay = document.getElementById('cloud-score');
+    const restartBtn = document.getElementById('restart-game');
+    
+    if (!gameArea || !scoreDisplay) return;
+    
+    const gameAreaRect = gameArea.getBoundingClientRect();
+    
+    // Reset state
+    cloudGameState.gameArea = gameArea;
+    cloudGameState.scoreDisplay = scoreDisplay;
+    cloudGameState.isPlaying = true;
+    cloudGameState.score = 0;
+    cloudGameState.clouds = [];
+    cloudGameState.avatarX = 38; // Starting position moved slightly to the right
+    cloudGameState.avatarY = 317.5; // Start avatar on the starting platform (cloud at 310 + 20px visual offset = 330, avatar size 25, so 330 - 12.5 = 317.5)
+    cloudGameState.avatarVelocityX = 0;
+    cloudGameState.avatarVelocityY = 0;
+    cloudGameState.isOnCloud = true; // Start on the starting cloud
+    cloudGameState.canJump = true; // Allow jumping from the start
+    cloudGameState.currentCloud = null;
+    cloudGameState.jumpedClouds = new Set();
+    cloudGameState.keys = {};
+    // Initialize camera to center on avatar at start
+    cloudGameState.cameraY = cloudGameState.avatarY - gameAreaRect.height / 2;
+    cloudGameState.lastCloudX = 38; // Start path above avatar's initial X position.
+    cloudGameState.nextCloudY = 220;
+    
+    // Create and add avatar to game area
+    const avatar = document.createElement('img');
+    avatar.className = 'cloud-game-avatar';
+    avatar.src = 'assets/svgs/compressed/avatar.svg';
+    gameArea.appendChild(avatar);
+    cloudGameState.avatar = avatar;
+    
+    // Start spawning clouds
+    spawnInitialClouds();
+    cloudGameState.gameLoopInterval = setInterval(gameLoop, 1000 / 60); // 60 FPS
+    
+    // Add keyboard listeners
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('keyup', handleKeyUp);
+    
+    // Restart button handler
+    if (restartBtn) {
+        restartBtn.onclick = () => {
+            playSound(clickSound, 0.3);
+            stopCloudGame();
+            initCloudGame();
+        };
+    }
+    
+    // Reset score display styling
+    scoreDisplay.style.background = 'rgba(255, 255, 255, 0.8)';
+    scoreDisplay.style.color = '#333';
+    
+    updateScore();
+    updateVisualPositions();
+}
+
+function stopCloudGame() {
+    cloudGameState.isPlaying = false;
+    if (cloudGameState.gameLoopInterval) clearInterval(cloudGameState.gameLoopInterval);
+    
+    document.removeEventListener('keydown', handleKeyDown);
+    document.removeEventListener('keyup', handleKeyUp);
+    
+    // Clear game elements from the DOM (but keep the score display)
+    if (cloudGameState.gameArea) {
+        // Remove clouds
+        cloudGameState.clouds.forEach(cloud => {
+            if (cloud.element && cloud.element.parentNode) {
+                cloud.element.remove();
+            }
+        });
+        
+        // Remove avatar
+        if (cloudGameState.avatar && cloudGameState.avatar.parentNode) {
+            cloudGameState.avatar.remove();
+        }
+    }
+    
+    cloudGameState.clouds = [];
+    cloudGameState.avatar = null;
+}
+
+function spawnInitialClouds() {
+    // Spawn the starting platform directly under the avatar
+    const startCloud = createCloudAtPosition(38, 310, 0);
+    cloudGameState.gameArea.appendChild(startCloud.element);
+    cloudGameState.clouds.push(startCloud);
+    
+    // Mark the starting cloud as already jumped so it doesn't count toward score
+    cloudGameState.jumpedClouds.add(startCloud.id);
+    cloudGameState.currentCloud = startCloud.id;
+    
+    // Spawn the first few layers of clouds to create a path upwards
+    for (let i = 0; i < 8; i++) {
+        spawnCloudLayer();
+    }
+}
+
+// REWRITTEN: This function now guarantees a solvable path.
+function spawnCloudLayer() {
+    if (!cloudGameState.isPlaying) return;
+    
+    const gameAreaRect = cloudGameState.gameArea.getBoundingClientRect();
+    if (!gameAreaRect.width) return;
+    
+    // Define the maximum horizontal distance a player can comfortably jump.
+    const maxHorizontalReach = 45; // in percentage
+    const cloudWidthPercent = (80 / gameAreaRect.width) * 100;
+
+    // Calculate the safe spawn range for the next cloud
+    const minX = Math.max(5, cloudGameState.lastCloudX - maxHorizontalReach);
+    const maxX = Math.min(100 - cloudWidthPercent - 5, cloudGameState.lastCloudX + maxHorizontalReach);
+
+    // Generate a new X position within the safe range
+    const newX = minX + Math.random() * (maxX - minX);
+
+    // Create the new cloud
+    const speed = (Math.random() * 0.2 + 0.1) * (Math.random() < 0.5 ? 1 : -1);
+    const cloud = createCloudAtPosition(newX, cloudGameState.nextCloudY, speed);
+    cloudGameState.gameArea.appendChild(cloud.element);
+    cloudGameState.clouds.push(cloud);
+
+    // Update state for the next cloud layer
+    cloudGameState.lastCloudX = newX;
+    cloudGameState.nextCloudY -= cloudGameState.cloudSpawnInterval;
+}
+
+function createCloudAtPosition(xPercent, yPixels, speed) {
+    const cloud = document.createElement('img');
+    cloud.className = 'cloud';
+    const randomImage = cloudImages[Math.floor(Math.random() * cloudImages.length)];
+    cloud.src = `assets/svgs/compressed/${randomImage}`;
+    
+    return {
+        element: cloud,
+        xPercent: xPercent,
+        y: yPixels,
+        speed: speed,
+        width: 80,
+        height: 50,
+        id: Math.random().toString(36).substr(2, 9)
+    };
+}
+
+// MODIFIED: Jump logic is now more reliable.
+function handleKeyDown(e) {
+    if (!cloudGameState.isPlaying) return;
+    
+    const key = e.key.toLowerCase();
+    cloudGameState.keys[key] = true;
+    
+    // Jump with Up Arrow or W if the player is allowed to jump
+    if ((key === 'arrowup' || key === 'w') && cloudGameState.canJump) {
+        cloudGameState.avatarVelocityY = cloudGameState.jumpPower;
+        cloudGameState.isOnCloud = false;
+        cloudGameState.canJump = false; // Prevent double-jumping
+        cloudGameState.currentCloud = null;
+        playSound(clickSound, 0.3);
+        
+        if (cloudGameState.avatar) {
+            const jumpImage = avatarJumpImages[Math.floor(Math.random() * avatarJumpImages.length)];
+            cloudGameState.avatar.src = `assets/svgs/compressed/${jumpImage}`;
+            // Add special class for avatar-jump-2 to make it slightly bigger
+            if (jumpImage === 'avatar-jump-2.svg') {
+                cloudGameState.avatar.classList.add('avatar-jump-2');
+            } else {
+                cloudGameState.avatar.classList.remove('avatar-jump-2');
+            }
+        }
+    }
+    
+    // Prevent default browser action for arrow keys and space
+    if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' '].includes(key)) {
+        e.preventDefault();
+    }
+}
+
+function handleKeyUp(e) {
+    const key = e.key.toLowerCase();
+    cloudGameState.keys[key] = false;
+}
+
+function gameLoop() {
+    if (!cloudGameState.isPlaying) return;
+    
+    const gameAreaRect = cloudGameState.gameArea.getBoundingClientRect();
+    if (!gameAreaRect.width) return;
+
+    // Handle horizontal movement
+    if (cloudGameState.keys['arrowleft'] || cloudGameState.keys['a']) {
+        cloudGameState.avatarVelocityX -= cloudGameState.moveSpeed;
+    } else if (cloudGameState.keys['arrowright'] || cloudGameState.keys['d']) {
+        cloudGameState.avatarVelocityX += cloudGameState.moveSpeed;
+    } else {
+        // Apply stronger friction when on a cloud for better control
+        const frictionFactor = cloudGameState.isOnCloud ? 0.75 : 0.85;
+        cloudGameState.avatarVelocityX *= frictionFactor;
+    }
+    
+    // Cap horizontal velocity for better control
+    const maxVelocityX = 0.8;
+    if (cloudGameState.avatarVelocityX > maxVelocityX) {
+        cloudGameState.avatarVelocityX = maxVelocityX;
+    } else if (cloudGameState.avatarVelocityX < -maxVelocityX) {
+        cloudGameState.avatarVelocityX = -maxVelocityX;
+    }
+
+    // Apply gravity
+    if (!cloudGameState.isOnCloud) {
+        cloudGameState.avatarVelocityY += cloudGameState.gravity;
+    }
+    
+    // Update avatar position
+    cloudGameState.avatarX += cloudGameState.avatarVelocityX;
+    cloudGameState.avatarY += cloudGameState.avatarVelocityY;
+    
+    // Keep avatar in horizontal bounds
+    const avatarWidthPercent = (25 / gameAreaRect.width) * 100;
+    if (cloudGameState.avatarX < avatarWidthPercent / 2) {
+        cloudGameState.avatarX = avatarWidthPercent / 2;
+        cloudGameState.avatarVelocityX = 0;
+    }
+    if (cloudGameState.avatarX > 100 - (avatarWidthPercent / 2)) {
+        cloudGameState.avatarX = 100 - (avatarWidthPercent / 2);
+        cloudGameState.avatarVelocityX = 0;
+    }
+    
+    // Update camera to follow the avatar's upward movement
+    const targetCameraY = cloudGameState.avatarY - gameAreaRect.height / 1.8;
+    if (targetCameraY < cloudGameState.cameraY) {
+         cloudGameState.cameraY += (targetCameraY - cloudGameState.cameraY) * 0.1; // Smooth camera follow
+    }
+    
+    // Move clouds first, so avatar moves with its cloud BEFORE collision check
+    moveClouds();
+    checkCloudCollisions();
+    
+    // Spawn new clouds as the camera moves up
+    if (cloudGameState.nextCloudY > cloudGameState.cameraY - 50) {
+        spawnCloudLayer();
+    }
+    
+    // Remove off-screen clouds
+    cloudGameState.clouds = cloudGameState.clouds.filter(cloud => {
+        if (cloud.y - cloudGameState.cameraY > gameAreaRect.height + 100) {
+            cloud.element.remove();
+            return false;
+        }
+        return true;
+    });
+    
+    updateVisualPositions();
+    
+    // Check for game over
+    if (cloudGameState.avatarY - cloudGameState.cameraY > gameAreaRect.height + 50) {
+        gameOver();
+    }
+}
+
+function moveClouds() {
+    const gameAreaRect = cloudGameState.gameArea.getBoundingClientRect();
+    if (!gameAreaRect.width) return;
+
+    for (const cloud of cloudGameState.clouds) {
+        cloud.xPercent += cloud.speed;
+        
+        if (cloudGameState.isOnCloud && cloudGameState.currentCloud === cloud.id) {
+            cloudGameState.avatarX += cloud.speed;
+        }
+        
+        const cloudWidthPercent = (cloud.width / gameAreaRect.width) * 100;
+        if (cloud.speed < 0 && cloud.xPercent < -cloudWidthPercent) {
+            cloud.xPercent = 100;
+        } else if (cloud.speed > 0 && cloud.xPercent > 100) {
+            cloud.xPercent = -cloudWidthPercent;
+        }
+    }
+}
+
+// MODIFIED: Collision logic now sets the `canJump` flag.
+function checkCloudCollisions() {
+    const wasOnCloud = cloudGameState.isOnCloud;
+    cloudGameState.isOnCloud = false;
+    
+    const gameAreaRect = cloudGameState.gameArea.getBoundingClientRect();
+    if (!gameAreaRect.width) return;
+    
+    const avatarSize = 25;
+    const avatarBottom = cloudGameState.avatarY + avatarSize / 2;
+    const avatarTop = cloudGameState.avatarY - avatarSize / 2;
+    const avatarPixelX = (cloudGameState.avatarX / 100) * gameAreaRect.width;
+
+    for (const cloud of cloudGameState.clouds) {
+        const cloudTop = cloud.y;
+        const cloudBottom = cloud.y + cloud.height;
+        const cloudPixelX = (cloud.xPercent / 100) * gameAreaRect.width;
+        
+        // Account for transparent edges of cloud images (about 15px on each side)
+        const cloudPadding = 15;
+        const cloudVisualLeft = cloudPixelX + cloudPadding;
+        const cloudVisualRight = cloudPixelX + cloud.width - cloudPadding;
+        const cloudVisualTop = cloudTop + 20; // Top surface of visible cloud
+
+        // Check if avatar is falling downwards and is vertically aligned with the cloud
+        if (cloudGameState.avatarVelocityY >= 0 &&
+            avatarBottom > cloudVisualTop &&
+            avatarTop < cloudBottom) {
+            
+            // Check for horizontal overlap with visual cloud area
+            if (avatarPixelX > cloudVisualLeft && avatarPixelX < cloudVisualRight) {
+                
+                // Collision detected!
+                cloudGameState.isOnCloud = true;
+                cloudGameState.currentCloud = cloud.id;
+                cloudGameState.avatarY = cloudVisualTop - avatarSize / 2;
+                cloudGameState.avatarVelocityY = 0;
+                
+                // Grant the ability to jump only upon first landing
+                if (!wasOnCloud) {
+                    cloudGameState.canJump = true; 
+                    if (cloudGameState.avatar) {
+                        cloudGameState.avatar.src = 'assets/svgs/compressed/avatar.svg';
+                        cloudGameState.avatar.classList.remove('avatar-jump-2');
+                    }
+                }
+                
+                if (!cloudGameState.jumpedClouds.has(cloud.id)) {
+                    cloudGameState.jumpedClouds.add(cloud.id);
+                    cloudGameState.score++;
+                    updateScore();
+                    playSound(chimeSound, 0.4);
+                }
+                
+                break; // Exit loop after finding a cloud to stand on
+            }
+        }
+    }
+}
+
+function updateVisualPositions() {
+    if (!cloudGameState.avatar) return;
+    
+    // Update avatar
+    const avatarScreenY = cloudGameState.avatarY - cloudGameState.cameraY;
+    cloudGameState.avatar.style.left = `${cloudGameState.avatarX}%`;
+    cloudGameState.avatar.style.top = `${avatarScreenY}px`;
+    cloudGameState.avatar.style.transform = 'translate(-50%, -50%)';
+    
+    // Update clouds
+    for (const cloud of cloudGameState.clouds) {
+        const cloudScreenY = cloud.y - cloudGameState.cameraY;
+        cloud.element.style.left = `${cloud.xPercent}%`;
+        cloud.element.style.top = `${cloudScreenY}px`;
+    }
+}
+
+function updateScore() {
+    if (cloudGameState.scoreDisplay) {
+        cloudGameState.scoreDisplay.textContent = `Clouds Jumped: ${cloudGameState.score}`;
+    }
+}
+
+function gameOver() {
+    if (!cloudGameState.isPlaying) return; // Prevent multiple calls
+    cloudGameState.isPlaying = false;
+    playSound(whooshSound, 0.5);
+    
+    if (cloudGameState.scoreDisplay) {
+        cloudGameState.scoreDisplay.textContent = `Game Over! Score: ${cloudGameState.score}`;
+        cloudGameState.scoreDisplay.style.background = 'rgba(244, 67, 54, 0.9)';
+        cloudGameState.scoreDisplay.style.color = 'white';
+    }
+    
+    if (cloudGameState.gameLoopInterval) clearInterval(cloudGameState.gameLoopInterval);
+}

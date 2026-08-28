@@ -6,6 +6,59 @@ html, body {
     padding: 0;
     font-family: 'Courier New', monospace;
 }
+
+/* Mobile/Portrait Blocker */
+#mobile-blocker {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+#mobile-blocker-content {
+    text-align: center;
+    color: white;
+    padding: 40px;
+    max-width: 500px;
+}
+
+.mobile-avatar {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 30px;
+}
+
+#mobile-blocker h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+#mobile-blocker p {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+/* Show blocker on mobile or portrait tablets */
+@media only screen and (max-width: 1024px) {
+    #mobile-blocker {
+        display: flex !important;
+    }
+}
+
+@media only screen and (orientation: portrait) and (max-width: 1366px) {
+    #mobile-blocker {
+        display: flex !important;
+    }
+}
+
 /* Intro Screen Styling */
 #intro-screen {
     position: fixed;
@@ -202,6 +255,15 @@ html, body {
     opacity: 0.6;
 }
 
+/* Hotspot wrapper to contain individual hotspots */
+.hotspot-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
 /* Make all hotspots take up the full container space */
 .hotspot {
     position: absolute;
@@ -217,7 +279,7 @@ html, body {
 }
 
 /* Tooltip styling */
-.hotspot::before {
+.hotspot-wrapper::before {
     content: attr(data-tooltip);
     position: absolute;
     bottom: 100%;
@@ -237,7 +299,7 @@ html, body {
     pointer-events: none;
 }
 
-.hotspot:hover::before {
+.hotspot-wrapper:hover::before {
     opacity: 1;
     visibility: visible;
 }
@@ -258,6 +320,10 @@ html, body {
 
 #hotspot-bookshelf {
     clip-path: polygon(76% 24%, 82% 18%, 99% 33%, 99% 100%, 81% 100%, 76% 98%);
+}
+
+#hotspot-clouds {
+    clip-path: polygon(3% 27%, 24% 13%, 24% 63%, 3% 78%);
 }
 
 /* Popup modal styling */
@@ -679,7 +745,6 @@ html, body {
 
 /* Make LinkedIn icon match theme - dark outer box, light inner "in" */
 .contact-icon[alt="LinkedIn"] {
-    background-color: #f0f0f0;
     filter: grayscale(1) contrast(2) brightness(0.5);
 }
 
@@ -719,4 +784,66 @@ html, body {
 .about-container::-webkit-scrollbar-thumb:hover,
 .contact-container::-webkit-scrollbar-thumb:hover {
     background: #555;
+}
+
+/* Cloud Hopper Game Styles */
+.cloud-game-container {
+    position: relative;
+    width: 100%;
+    height: min(62vh, 500px);
+    min-height: 420px;
+    background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
+    border: 3px solid black;
+    overflow: hidden;
+}
+
+.cloud-game-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.cloud-game-score {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 8px 12px;
+    border: 2px solid black;
+    z-index: 20;
+}
+
+.cloud-game-score.cloud-game-over {
+    background: rgba(244, 67, 54, 0.92);
+    color: white;
+}
+
+.cloud-game-instructions {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    color: #333;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.cloud-game-restart {
+    display: block;
+    margin: 10px auto;
+    padding: 8px 16px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    background-color: #4CAF50;
+    color: white;
+    border: 2px solid black;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cloud-game-restart:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
 }

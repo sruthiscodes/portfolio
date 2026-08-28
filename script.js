@@ -1,145 +1,7 @@
-// Audio functionality
-const bgMusic = document.getElementById('bg-music');
-const clickSound = document.getElementById('click-sound');
-const chimeSound = document.getElementById('chime-sound');
-const whooshSound = document.getElementById('whoosh-sound');
-const musicToggle = document.getElementById('music-toggle');
+// Main script file - Core portfolio functionality
+// Note: portfolioData is defined in utils.js
 
-let isMusicPlaying = false;
-let lastHoverSoundTime = 0;
-const hoverSoundCooldown = 200; // milliseconds between hover sounds
-let currentOpenHotspot = null; // Track which hotspot opened the current modal
-
-// Function to play sound effect
-function playSound(sound, volume = 1.0, startTime = 0) {
-    if (sound) {
-        sound.volume = volume;
-        sound.currentTime = startTime;
-        sound.play().catch(err => console.log('Sound play failed:', err));
-    }
-}
-
-// Start background music after user interaction
-function startBackgroundMusic() {
-    if (!isMusicPlaying) {
-        bgMusic.volume = 0.3; // Set to 30% volume
-        bgMusic.play().then(() => {
-            isMusicPlaying = true;
-            musicToggle.classList.remove('music-muted');
-            musicToggle.classList.add('music-playing');
-        }).catch(err => console.log('Music play failed:', err));
-    }
-}
-
-// Toggle music on/off
-musicToggle.addEventListener('click', () => {
-    playSound(clickSound, 0.3);
-    if (isMusicPlaying) {
-        bgMusic.pause();
-        isMusicPlaying = false;
-        musicToggle.classList.remove('music-playing');
-        musicToggle.classList.add('music-muted');
-    } else {
-        bgMusic.play().then(() => {
-            isMusicPlaying = true;
-            musicToggle.classList.remove('music-muted');
-            musicToggle.classList.add('music-playing');
-        }).catch(err => console.log('Music play failed:', err));
-    }
-});
-
-// Portfolio data object
-const portfolioData = {
-    projects: [
-        {
-            title: "Neurocontrol System for Prosthetic Devices",
-            description: "Developing a non-invasive brain-computer interface that decodes EEG signals from the motor cortex to control assistive prosthetic devices. This project involves applying Continuous Wavelet Transform on PhysioNet EEG motor imagery data and building a spatio-temporal CNN for real-time classification using Python, TensorFlow, MNE, and CWT.",
-            github_link: "https://github.com/sruthiscodes/capstone"
-        },
-        {
-            title: "Multi-Modal Adventure Story Engine",
-            description: "Designed and built a dynamic storytelling engine that combines local large language models with both text and visual outputs to create immersive narrative scenes. Utilized Python, llama.cpp, ChromaDB, and Replicate API for image diffusion, deploying a FastAPI backend to enable multi-turn user interactions and maintain plot continuity.",
-            github_link: "https://github.com/sruthiscodes/adventure-story-game"
-        },
-        {
-            title: "Gesture-Controlled Drone",
-            description: "Developed an innovative gesture-based drone control system using ROS 2 Humble, simulated in Gazebo. Integrated MediaPipe for real-time hand gesture recognition and landmark detection, and implemented the control logic in Python to translate gestures into drone commands. Structured the project with modular ROS 2 packages, managed via CMake and setup.py, and built with colcon on Linux for seamless deployment.",
-            github_link: "https://github.com/sruthiscodes/gesture-controlled-drone"
-        },
-        {
-            title: "EmoStream – Real-Time Reaction Pipeline",
-            description: "Created a real-time emoji-based feedback system for live video content engagement. Developed asynchronous Flask APIs with millisecond latency, integrated Kafka's pub/sub architecture for high-throughput event streaming, and processed events with Spark Streaming to enable dynamic content personalization.",
-            github_link: "https://github.com/sruthiscodes/emostream"
-        },
-        {
-            title: "Secure Live Video Streaming Platform",
-            description: "Built a privacy-focused live video transmission system optimized for low-latency and encrypted delivery across devices. Implemented SSL encryption alongside an OpenCV-based frame processing pipeline to enable secure, real-time peer-to-peer media exchange over TCP sockets.",
-            github_link: "https://github.com/sruthiscodes/live-video-streaming"
-        },
-        {
-            title: "Nimble: Scalable Restaurant Discovery & Ordering Platform",
-            description: "Created a full-stack eCommerce application using the MERN stack, featuring a scalable design for restaurant discovery and ordering. Developed RESTful APIs for menu browsing, cart management, and secure order placement, with robust user authentication, session management, and real-time order tracking to enhance user experience.",
-            github_link: "https://github.com/sruthiscodes/nimble"
-        }
-    ],
-    experiences: [
-        {
-            role: "Summer Intern",
-            company: "dentsu, Bengaluru, India",
-            dates: "June 2025 – July 2025",
-            description: "• Built a scalable Model Context Protocol (MCP) framework for Merkury, managing 260+ million user profiles\n• Developed a secure natural language to SQL tool using Snowflake Cortex Analyst and Azure OpenAI\n• Used LangGraph to orchestrate an XGBoost-based lookalike audience model for automated targeting\n• Created MCP tools to enable agentic AI workflows across enterprise applications"
-        }
-    ],
-    aboutMe: {
-        bio: "I'm currently a senior at PES University in Bengaluru, grinding through my Computer Science Engineering degree (with equal parts love and chaos). I got my first tiny Lenovo laptop at age four, which sparked my ever-curious brain. That feeling just kept growing and today, I build stuff, aiming to fix things with tech, one small step at a time. Still figuring it out. Still chasing that same spark :)",
-        skills: {
-            "Languages & Core": [
-                { name: "Python", icon: "python.svg" },
-                { name: "C", icon: "c.svg" },
-                { name: "SQL", icon: "mysql.svg" }
-            ],
-            "ML/AI Frameworks": [
-                { name: "TensorFlow", icon: "tensorflow.svg" },
-                { name: "PyTorch", icon: "pytorch.svg" },
-                { name: "scikit-learn", icon: "scikitlearn.svg" }
-            ],
-            "Data Engineering": [
-                { name: "Kafka", icon: "apachekafka.svg" },
-                { name: "Spark", icon: "apachespark.svg" },
-                { name: "Snowflake", icon: "snowflake.svg" },
-                { name: "Hadoop", icon: "apachehadoop.svg" }
-            ]
-        },
-        education: [
-            {
-                year: "2022–2026",
-                degree: "Bachelor of Technology in Computer Science and Engineering",
-                institution: "PES University, Bengaluru",
-                score: "9.1/10"
-            },
-            {
-                year: "2022",
-                degree: "Indian School Certificate (12th Grade)",
-                institution: "NPS International, Chennai",
-                score: "93.8%"
-            },
-            {
-                year: "2020",
-                degree: "Indian Certificate of Secondary Education (10th Grade)",
-                institution: "NPS International, Chennai",
-                score: "94.17%"
-            }
-        ],
-          resume_link: "https://drive.google.com/file/d/1R0U3IRAHfpFIeKElfqRq9KWfT3EaOVR9/view?usp=sharing"
-    },
-    contact: {
-        email: "sruthisivakumar31@gmail.com",
-        linkedin: "https://www.linkedin.com/in/sruthisivakumar31/",
-        github_profile: "https://github.com/sruthiscodes"
-    }
-};
-
-// Get DOM elements
+// Get DOM elements (modal-related elements are in modal.js)
 const introScreen = document.getElementById('intro-screen');
 const introAvatar = document.getElementById('intro-avatar');
 const gameContainer = document.getElementById('game-container');
@@ -150,10 +12,7 @@ const computerHotspot = document.getElementById('hotspot-computer');
 const phoneHotspot = document.getElementById('hotspot-phone');
 const bookshelfHotspot = document.getElementById('hotspot-bookshelf');
 const bulletinHotspot = document.getElementById('hotspot-bulletin');
-const modal = document.getElementById('popup-modal');
-const modalTitle = document.getElementById('modal-title');
-const modalContent = document.getElementById('modal-content');
-const closeButton = document.getElementById('close-button');
+const cloudsHotspot = document.getElementById('hotspot-clouds');
 
 // Initial state - hide main content
 gameContainer.classList.add('hidden');
@@ -236,8 +95,7 @@ function startPortfolioTransition() {
     }, 50);
 }
 
-// Project carousel state
-let currentProjectIndex = 0;
+// Project carousel state is defined in carousel.js
 
 // Function to render modal content based on page name
 function renderModalContent(pageName) {
@@ -347,6 +205,20 @@ function renderModalContent(pageName) {
             `;
             break;
 
+        case 'cloudGame':
+            title = 'Cloud Hopper';
+            content = `
+                <div class="cloud-game-instructions">
+                    Use Arrow Keys or WASD to move! Bounce from platform to platform and climb as high as you can.
+                </div>
+                <div class="cloud-game-container" id="cloud-game-area">
+                    <canvas id="cloud-game-canvas" class="cloud-game-canvas" width="360" height="480" aria-label="Cloud Hopper game canvas"></canvas>
+                    <div class="cloud-game-score" id="cloud-score">Platforms Climbed: 0</div>
+                </div>
+                <button class="cloud-game-restart" id="restart-game">Restart Game</button>
+            `;
+            break;
+
         default:
             title = 'Error';
             content = '<p>Content not found.</p>';
@@ -393,6 +265,9 @@ function hideModal() {
     // Wait for animation to complete before hiding
     setTimeout(() => {
     modal.style.display = 'none';
+        if (currentOpenHotspot === 'clouds') {
+            stopCloudGame();
+        }
         currentOpenHotspot = null; // Reset when modal closes
     }, 300);
 }
@@ -403,7 +278,7 @@ function isModalOpen() {
 }
 
 // Add hover sound effects to hotspots with cooldown and avatar reaction
-const hotspots = [computerHotspot, phoneHotspot, bookshelfHotspot, bulletinHotspot];
+const hotspots = [computerHotspot, phoneHotspot, bookshelfHotspot, bulletinHotspot, cloudsHotspot];
 hotspots.forEach(hotspot => {
     hotspot.addEventListener('mouseenter', () => {
         const now = Date.now();
@@ -518,6 +393,29 @@ bulletinHotspot.addEventListener('click', () => {
     }
 });
 
+cloudsHotspot.addEventListener('click', () => {
+    if (isModalOpen() && currentOpenHotspot === 'clouds') {
+        playSound(whooshSound, 0.8, 0.2);
+        hideModal();
+        stopCloudGame();
+    } else {
+        playSound(whooshSound, 0.8, 0.2);
+        // If switching from another hotspot, instantly reset
+        if (isModalOpen()) {
+            modal.classList.remove('modal-visible');
+            modal.style.display = 'none';
+            currentOpenHotspot = null;
+            stopCloudGame();
+        }
+        renderModalContent('cloudGame');
+        setTimeout(() => {
+            showModal(cloudsHotspot);
+            currentOpenHotspot = 'clouds';
+            initCloudGame();
+        }, 10);
+    }
+});
+
 // Function to attach project carousel listeners
 function attachProjectCarouselListeners() {
     const prevBtn = document.getElementById('prev-project');
@@ -625,3 +523,447 @@ document.addEventListener('click', (event) => {
         dialogueBox.style.display = 'none';
     }
 });
+
+// ===== CLOUD HOPPER GAME LOGIC =====
+
+const cloudGameState = {
+    running: false,
+    score: 0,
+    requestId: null,
+    lastFrameTime: 0,
+    canvas: null,
+    context: null,
+    scoreDisplay: null,
+    restartButton: null,
+    platforms: [],
+    jumpedPlatforms: new Set(),
+    keys: {},
+    cameraY: 0,
+    nextPlatformY: 0,
+    highestPlatformY: 0,
+    lastPlatformX: 0,
+    minPlatformSpace: 15,
+    maxPlatformSpace: 20,
+    player: {
+        x: 0,
+        y: 0,
+        dx: 0,
+        dy: 0,
+        width: 28,
+        height: 36
+    },
+    gravity: 0.33,
+    drag: 0.3,
+    bounceVelocity: -12.5,
+    platformWidth: 65,
+    platformHeight: 18,
+    platformStart: 0,
+    boundKeyDown: null,
+    boundKeyUp: null
+};
+
+function random(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+function initCloudGame() {
+    stopCloudGame();
+
+    const gameArea = document.getElementById('cloud-game-area');
+    const canvas = document.getElementById('cloud-game-canvas');
+    const scoreDisplay = document.getElementById('cloud-score');
+    const restartBtn = document.getElementById('restart-game');
+
+    if (!gameArea || !canvas || !scoreDisplay) {
+        return;
+    }
+
+    const context = canvas.getContext('2d');
+    if (!context) {
+        return;
+    }
+
+    cloudGameState.running = true;
+    cloudGameState.canvas = canvas;
+    cloudGameState.context = context;
+    cloudGameState.scoreDisplay = scoreDisplay;
+    cloudGameState.restartButton = restartBtn;
+    cloudGameState.score = 0;
+    cloudGameState.platforms = [];
+    cloudGameState.jumpedPlatforms = new Set();
+    cloudGameState.keys = {};
+    cloudGameState.cameraY = 0;
+    cloudGameState.nextPlatformY = 0;
+    cloudGameState.highestPlatformY = 0;
+    cloudGameState.lastPlatformX = 0;
+    cloudGameState.minPlatformSpace = 15;
+    cloudGameState.maxPlatformSpace = 20;
+    cloudGameState.lastFrameTime = performance.now();
+
+    resizeCloudGameCanvas();
+    seedCloudGameWorld();
+    bindCloudGameControls();
+
+    if (restartBtn) {
+        restartBtn.onclick = () => {
+            playSound(clickSound, 0.3);
+            initCloudGame();
+        };
+    }
+
+    scoreDisplay.classList.remove('cloud-game-over');
+    updateCloudGameScore();
+    drawCloudGame();
+    cloudGameState.requestId = requestAnimationFrame(gameLoop);
+}
+
+function stopCloudGame() {
+    cloudGameState.running = false;
+
+    if (cloudGameState.requestId) {
+        cancelAnimationFrame(cloudGameState.requestId);
+        cloudGameState.requestId = null;
+    }
+
+    if (cloudGameState.boundKeyDown) {
+        document.removeEventListener('keydown', cloudGameState.boundKeyDown);
+        cloudGameState.boundKeyDown = null;
+    }
+
+    if (cloudGameState.boundKeyUp) {
+        document.removeEventListener('keyup', cloudGameState.boundKeyUp);
+        cloudGameState.boundKeyUp = null;
+    }
+
+    if (cloudGameState.restartButton) {
+        cloudGameState.restartButton.onclick = null;
+    }
+
+    cloudGameState.canvas = null;
+    cloudGameState.context = null;
+    cloudGameState.scoreDisplay = null;
+    cloudGameState.restartButton = null;
+}
+
+function resizeCloudGameCanvas() {
+    if (!cloudGameState.canvas) return;
+
+    const rect = cloudGameState.canvas.getBoundingClientRect();
+    const width = Math.max(320, Math.floor(rect.width || 360));
+    const height = Math.max(420, Math.floor(rect.height || 480));
+
+    cloudGameState.canvas.width = width;
+    cloudGameState.canvas.height = height;
+    cloudGameState.platformStart = height - 50;
+}
+
+function seedCloudGameWorld() {
+    const width = cloudGameState.canvas.width;
+    const height = cloudGameState.canvas.height;
+    const startPlatform = {
+        id: Math.random().toString(36).slice(2, 11),
+        x: width / 2 - cloudGameState.platformWidth / 2,
+        y: cloudGameState.platformStart,
+        width: cloudGameState.platformWidth,
+        height: cloudGameState.platformHeight
+    };
+
+    cloudGameState.platforms.push(startPlatform);
+    cloudGameState.jumpedPlatforms.add(startPlatform.id);
+
+    let y = startPlatform.y;
+    while (y > -height) {
+        y -= cloudGameState.platformHeight + random(cloudGameState.minPlatformSpace, cloudGameState.maxPlatformSpace);
+
+        let x;
+        do {
+            x = random(25, width - 25 - cloudGameState.platformWidth);
+        } while (
+            y > height / 2 &&
+            x > width / 2 - cloudGameState.platformWidth * 1.5 &&
+            x < width / 2 + cloudGameState.platformWidth * 0.5
+        );
+
+        cloudGameState.platforms.push({
+            id: Math.random().toString(36).slice(2, 11),
+            x,
+            y,
+            width: cloudGameState.platformWidth,
+            height: cloudGameState.platformHeight
+        });
+    }
+
+    cloudGameState.highestPlatformY = cloudGameState.platforms.reduce((lowest, platform) => Math.min(lowest, platform.y), startPlatform.y);
+    cloudGameState.nextPlatformY = cloudGameState.highestPlatformY - cloudGameState.platformHeight - random(cloudGameState.minPlatformSpace, cloudGameState.maxPlatformSpace);
+    cloudGameState.lastPlatformX = startPlatform.x;
+
+    cloudGameState.player.x = startPlatform.x + cloudGameState.platformWidth / 2 - cloudGameState.player.width / 2;
+    cloudGameState.player.y = startPlatform.y - cloudGameState.player.height;
+    cloudGameState.player.dx = 0;
+    cloudGameState.player.dy = cloudGameState.bounceVelocity;
+    cloudGameState.cameraY = Math.max(0, cloudGameState.player.y - height / 2);
+}
+
+function bindCloudGameControls() {
+    cloudGameState.boundKeyDown = handleCloudGameKeyDown;
+    cloudGameState.boundKeyUp = handleCloudGameKeyUp;
+    document.addEventListener('keydown', cloudGameState.boundKeyDown);
+    document.addEventListener('keyup', cloudGameState.boundKeyUp);
+}
+
+function handleCloudGameKeyDown(event) {
+    if (!cloudGameState.running) return;
+
+    const key = event.key.toLowerCase();
+    cloudGameState.keys[key] = true;
+
+    if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' ', 'space'].includes(key)) {
+        event.preventDefault();
+    }
+}
+
+function handleCloudGameKeyUp(event) {
+    cloudGameState.keys[event.key.toLowerCase()] = false;
+}
+
+function gameLoop(timestamp) {
+    if (!cloudGameState.running) return;
+
+    const rawDelta = timestamp - cloudGameState.lastFrameTime;
+    const delta = Math.min(2, Math.max(0.5, rawDelta / 16.67));
+    cloudGameState.lastFrameTime = timestamp;
+
+    const canvas = cloudGameState.canvas;
+    if (!canvas) return;
+
+    const previousY = cloudGameState.player.y;
+
+    const leftPressed = cloudGameState.keys.arrowleft || cloudGameState.keys.a;
+    const rightPressed = cloudGameState.keys.arrowright || cloudGameState.keys.d;
+
+    if (leftPressed && !rightPressed) {
+        cloudGameState.player.dx = -3.5;
+    } else if (rightPressed && !leftPressed) {
+        cloudGameState.player.dx = 3.5;
+    } else {
+        cloudGameState.player.dx *= 1 - cloudGameState.drag * 0.12 * delta;
+        if (Math.abs(cloudGameState.player.dx) < 0.01) {
+            cloudGameState.player.dx = 0;
+        }
+    }
+
+    cloudGameState.player.dy += cloudGameState.gravity * delta;
+    cloudGameState.player.x += cloudGameState.player.dx * delta;
+    cloudGameState.player.y += cloudGameState.player.dy * delta;
+
+    if (cloudGameState.player.x < -cloudGameState.player.width) {
+        cloudGameState.player.x = canvas.width;
+    } else if (cloudGameState.player.x > canvas.width) {
+        cloudGameState.player.x = -cloudGameState.player.width;
+    }
+
+    const targetCameraY = cloudGameState.player.y - canvas.height / 2;
+    if (targetCameraY < cloudGameState.cameraY) {
+        cloudGameState.cameraY += (targetCameraY - cloudGameState.cameraY) * Math.min(1, 0.25 * delta);
+    }
+
+    resolveCloudGameCollisions(previousY);
+    spawnCloudGamePlatformsIfNeeded();
+    trimCloudGamePlatforms();
+    drawCloudGame();
+
+    if (cloudGameState.player.y - cloudGameState.cameraY > canvas.height + 60) {
+        endCloudGame();
+        return;
+    }
+
+    cloudGameState.requestId = requestAnimationFrame(gameLoop);
+}
+
+function resolveCloudGameCollisions(previousY) {
+    if (cloudGameState.player.dy <= 0) return;
+
+    const player = cloudGameState.player;
+    const previousBottom = previousY + player.height;
+    const currentBottom = player.y + player.height;
+    const playerLeft = player.x + 4;
+    const playerRight = player.x + player.width - 4;
+
+    let landingPlatform = null;
+    let landingTop = Number.POSITIVE_INFINITY;
+
+    for (const platform of cloudGameState.platforms) {
+        const crossesTop = previousBottom <= platform.y && currentBottom >= platform.y;
+        const horizontalOverlap = playerRight >= platform.x && playerLeft <= platform.x + platform.width;
+
+        if (crossesTop && horizontalOverlap && platform.y < landingTop) {
+            landingTop = platform.y;
+            landingPlatform = platform;
+        }
+    }
+
+    if (!landingPlatform) return;
+
+    player.y = landingPlatform.y - player.height;
+    player.dy = cloudGameState.bounceVelocity;
+
+    if (!cloudGameState.jumpedPlatforms.has(landingPlatform.id)) {
+        cloudGameState.jumpedPlatforms.add(landingPlatform.id);
+        cloudGameState.score += 1;
+        updateCloudGameScore();
+        playSound(chimeSound, 0.4);
+    } else {
+        playSound(clickSound, 0.15);
+    }
+}
+
+function spawnCloudGamePlatformsIfNeeded() {
+    const width = cloudGameState.canvas.width;
+    while (cloudGameState.nextPlatformY > cloudGameState.cameraY - 100) {
+        let x;
+        const maxHorizontalShift = 110;
+        const unclampedX = cloudGameState.lastPlatformX + random(-maxHorizontalShift, maxHorizontalShift);
+        const minX = 10;
+        const maxX = width - 10 - cloudGameState.platformWidth;
+        x = Math.max(minX, Math.min(maxX, unclampedX));
+
+        const platform = {
+            id: Math.random().toString(36).slice(2, 11),
+            x,
+            y: cloudGameState.nextPlatformY,
+            width: cloudGameState.platformWidth,
+            height: cloudGameState.platformHeight
+        };
+
+        cloudGameState.platforms.push(platform);
+        cloudGameState.lastPlatformX = x;
+        cloudGameState.highestPlatformY = Math.min(cloudGameState.highestPlatformY, platform.y);
+
+        cloudGameState.minPlatformSpace += 0.4;
+        cloudGameState.maxPlatformSpace += 0.4;
+        cloudGameState.maxPlatformSpace = Math.min(cloudGameState.maxPlatformSpace, cloudGameState.canvas.height / 2);
+
+        cloudGameState.nextPlatformY -= cloudGameState.platformHeight + random(cloudGameState.minPlatformSpace, cloudGameState.maxPlatformSpace);
+    }
+}
+
+function trimCloudGamePlatforms() {
+    const cutoff = cloudGameState.cameraY + cloudGameState.canvas.height + 100;
+    cloudGameState.platforms = cloudGameState.platforms.filter(platform => platform.y <= cutoff);
+}
+
+function drawCloudGame() {
+    const context = cloudGameState.context;
+    const canvas = cloudGameState.canvas;
+    if (!context || !canvas) return;
+
+    const width = canvas.width;
+    const height = canvas.height;
+
+    const sky = context.createLinearGradient(0, 0, 0, height);
+    sky.addColorStop(0, '#86d7ff');
+    sky.addColorStop(1, '#eaf8ff');
+    context.fillStyle = sky;
+    context.fillRect(0, 0, width, height);
+
+    drawCloudGameBackdrop(context, width, height);
+
+    for (const platform of cloudGameState.platforms) {
+        const screenY = platform.y - cloudGameState.cameraY;
+        if (screenY < -80 || screenY > height + 40) continue;
+
+        context.fillStyle = '#2f9e44';
+        context.fillRect(platform.x, screenY, platform.width, platform.height);
+        context.strokeStyle = '#1f6f31';
+        context.lineWidth = 2;
+        context.strokeRect(platform.x, screenY, platform.width, platform.height);
+    }
+
+    const playerScreenY = cloudGameState.player.y - cloudGameState.cameraY;
+    drawCloudGamePlayer(context, cloudGameState.player.x, playerScreenY, cloudGameState.player.width, cloudGameState.player.height);
+}
+
+function drawCloudGameBackdrop(context, width, height) {
+    context.save();
+    context.fillStyle = 'rgba(255, 255, 255, 0.16)';
+
+    const cloudBands = [
+        { x: 30, y: 50, scale: 1.0 },
+        { x: width * 0.65, y: 90, scale: 1.2 },
+        { x: width * 0.18, y: 180, scale: 0.8 },
+        { x: width * 0.78, y: 230, scale: 0.9 },
+        { x: width * 0.45, y: 310, scale: 1.1 }
+    ];
+
+    for (const cloud of cloudBands) {
+        context.beginPath();
+        context.ellipse(cloud.x, cloud.y, 42 * cloud.scale, 18 * cloud.scale, 0, 0, Math.PI * 2);
+        context.ellipse(cloud.x + 28 * cloud.scale, cloud.y - 10 * cloud.scale, 32 * cloud.scale, 16 * cloud.scale, 0, 0, Math.PI * 2);
+        context.ellipse(cloud.x + 52 * cloud.scale, cloud.y, 40 * cloud.scale, 18 * cloud.scale, 0, 0, Math.PI * 2);
+        context.fill();
+    }
+
+    context.restore();
+}
+
+function drawCloudGamePlayer(context, x, y, width, height) {
+    context.save();
+
+    context.fillStyle = '#ffe45c';
+    context.strokeStyle = '#1a1a1a';
+    context.lineWidth = 3;
+    context.beginPath();
+    drawCloudGameRoundedRectPath(context, x, y, width, height, 7);
+    context.fill();
+    context.stroke();
+
+    context.fillStyle = '#1a1a1a';
+    context.beginPath();
+    context.arc(x + width * 0.35, y + height * 0.4, 2.2, 0, Math.PI * 2);
+    context.arc(x + width * 0.65, y + height * 0.4, 2.2, 0, Math.PI * 2);
+    context.fill();
+
+    context.beginPath();
+    context.moveTo(x + width * 0.32, y + height * 0.66);
+    context.quadraticCurveTo(x + width * 0.5, y + height * 0.78, x + width * 0.68, y + height * 0.66);
+    context.stroke();
+
+    context.restore();
+}
+
+function drawCloudGameRoundedRectPath(context, x, y, width, height, radius) {
+    const cornerRadius = Math.min(radius, width / 2, height / 2);
+    context.moveTo(x + cornerRadius, y);
+    context.lineTo(x + width - cornerRadius, y);
+    context.quadraticCurveTo(x + width, y, x + width, y + cornerRadius);
+    context.lineTo(x + width, y + height - cornerRadius);
+    context.quadraticCurveTo(x + width, y + height, x + width - cornerRadius, y + height);
+    context.lineTo(x + cornerRadius, y + height);
+    context.quadraticCurveTo(x, y + height, x, y + height - cornerRadius);
+    context.lineTo(x, y + cornerRadius);
+    context.quadraticCurveTo(x, y, x + cornerRadius, y);
+    context.closePath();
+}
+
+function updateCloudGameScore() {
+    if (cloudGameState.scoreDisplay) {
+        cloudGameState.scoreDisplay.textContent = `Platforms Climbed: ${cloudGameState.score}`;
+    }
+}
+
+function endCloudGame() {
+    if (!cloudGameState.running) return;
+
+    cloudGameState.running = false;
+    if (cloudGameState.requestId) {
+        cancelAnimationFrame(cloudGameState.requestId);
+        cloudGameState.requestId = null;
+    }
+
+    playSound(whooshSound, 0.5);
+
+    if (cloudGameState.scoreDisplay) {
+        cloudGameState.scoreDisplay.textContent = `Game Over! Score: ${cloudGameState.score}`;
+        cloudGameState.scoreDisplay.classList.add('cloud-game-over');
+    }
+}
